@@ -16,12 +16,12 @@ if (-not(Get-Module -Name PSSQLite)) {
       return
     }
 }
-
+Import-Module PSSQLite
 #endregion Dependencies
 
 #region Config
 
-Import-Module PSSQLite
+
 
 $DB_FILENAME = 'tracker.db'
 $DB_PATH = Join-Path -Path $PSScriptRoot -ChildPath $DB_FILENAME
@@ -32,21 +32,21 @@ if (-not(Test-Path -Path $DB_PATH)) {
     
     # Create arpevent table
     $create_table_sql = @"
-CREATE TABLE arpevent (
-    UUID TEXT PRIMARY KEY,
-    IP TEXT NOT NULL,
-    InterfaceIndex INTEGER,
-    AddressFamily INTEGER,
-    InterfaceAlias TEXT,
-    LinkLayerAddress TEXT,
-    State INTEGER,
-    InvalidationCount INTEGER,
-    CreationTime INTEGER,
-    LastReachableTime INTEGER,
-    LastUnreachableTime INTEGER,
-    ReachableTime INTEGER,
-    UnreachableTime INTEGER
-);
+    CREATE TABLE IF NOT EXISTS "arpevent" (
+        "UUID" TEXT PRIMARY KEY,
+        "IP" TEXT NOT NULL,
+        "InterfaceIndex" INTEGER,
+        "AddressFamily" INTEGER,
+        "InterfaceAlias" TEXT,
+        "LinkLayerAddress" TEXT,
+        "State" INTEGER,
+        "InvalidationCount" INTEGER,
+        "CreationTime" INTEGER,
+        "LastReachableTime" INTEGER,
+        "LastUnreachableTime" INTEGER,
+        "ReachableTime" INTEGER,
+        "UnreachableTime" INTEGER
+    );    
 "@
     
     Invoke-SqliteQuery -DataSource $DB_PATH -Query $create_table_sql | Out-Null
