@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>tracker.sh README</title>
 </head>
 <body>
   <h1>Tracker.sh</h1>
