@@ -8,4 +8,11 @@ CREATE TABLE IF NOT EXISTS "arpevent" (
 	"MASK"	TEXT,
 	"DEVICE"	TEXT,
 	PRIMARY KEY("UUID")
-)
+);
+CREATE TABLE IF NOT EXISTS "sys_config" (
+        "PROPERTY"      TEXT,
+        "VALUE" TEXT,
+        PRIMARY KEY("PROPERTY")
+);
+
+
