@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ARP Event Tracker</title>
   </head>
   <body>
     <h1>ARP Event Tracker</h1>
