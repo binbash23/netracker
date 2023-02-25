@@ -3,7 +3,7 @@
   <head>
   </head>
   <body>
-    <h1>ARP Event Tracker</h1>
+    <h1>arpevent_tracker.ps1</h1>
     <p>This PowerShell script tracks ARP events and writes the information in a SQLite database. It was authored by Jens Heine and Andreas Stöcker.</p>
     <h2>Dependencies</h2>
     <p>This script requires the <code>PSSQLite</code> module. If the module is not already installed, the script will attempt to install it with administrator rights using PowerShell's <code>Install-Module</code> cmdlet.</p>
