@@ -27,18 +27,6 @@ Import-Module PSSQLite
 $DB_FILENAME = 'collector.db'
 $DB_PATH = Join-Path -Path $PSScriptRoot -ChildPath $DB_FILENAME
 
-$Check_arp_event_tbl='CREATE TABLE IF NOT EXISTS "arpevent" (
-	"UUID"	TEXT,
-	"CREATE_DATE"	datetime not null default (datetime(CURRENT_TIMESTAMP, "localtime")),
-	"IP"	TEXT,
-	"HW_TYPE"	TEXT,
-	"FLAGS"	TEXT,
-	"HW_ADDRESS"	TEXT,
-	"MASK"	TEXT,
-	"DEVICE"	TEXT,
-	PRIMARY KEY("UUID")
-);'
-
 $Check_Sys_config_tbl = 'CREATE TABLE IF NOT EXISTS "sys_config" (
   "PROPERTY"      TEXT,
   "VALUE" TEXT,
@@ -55,7 +43,13 @@ Write-Verbose "Running $PSCommandPath"
 Write-Verbose "Checking netracker database..."
 if($(Test-path -Path $($PSScriptRoot + '\' + $DB_FILENAME)) -ne $true)
 {
-    Invoke-SqliteQuery -DataSource $DB_PATH -Query $Check_Sys_config_tbl
+    try {
+        Invoke-SqliteQuery -DataSource $DB_PATH -Query $Check_Sys_config_tbl
+        Write-Verbose "netracker database created..."
+    }
+    catch {
+        Write-Verbose "netracker database creation failed ..."
+    }
 }
 
 
