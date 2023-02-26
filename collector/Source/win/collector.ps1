@@ -28,6 +28,8 @@ $DB_FILENAME = 'collector.db'
 $DB_PATH = Join-Path -Path $PSScriptRoot -ChildPath $DB_FILENAME
 
 $Check_Sys_config_tbl = 'CREATE TABLE IF NOT EXISTS "sys_config" (
+    "DB_UUID" TEXT,
+  "CREATE_DATE"	 datetime not null default (datetime(CURRENT_TIMESTAMP, "localtime")),
   "PROPERTY"      TEXT,
   "VALUE" TEXT,
   PRIMARY KEY("PROPERTY")
