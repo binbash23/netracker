@@ -19,6 +19,6 @@ echo "Running $0"
 [ -z "${DATABASE_FILENAME}" ] && { echo "Database filename not set."; exit 1; }
 
 echo "Checking database ${DATABASE_FILENAME}..."
-./create_tracker_database.sh
+./create_database.sh
 
 echo $0 finished.
