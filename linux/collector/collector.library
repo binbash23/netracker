@@ -22,27 +22,32 @@ function log() {
 
   local SOURCE="${1}"
   local DESCRIPTION="${2}"
-  local LOG_LEVEL="${3}"
+  local LOCAL_LOG_LEVEL="${3}"
   local COLLECTION_UUID="${4}"
 
   local SOURCE="${SOURCE:=unknown}"
   #local DESCRIPTION="${2}"
-  local LOG_LEVEL="${LOG_LEVEL:=3}"
+  local LOCAL_LOG_LEVEL="${LOCAL_LOG_LEVEL:=3}"
   local COLLECTION_UUID="${COLLECTION_UUID:=-1}"
+  
+  if [ ${LOCAL_LOG_LEVEL} -gt ${LOG_LEVEL} ]; then
+    # loglevel is to low
+    return
+  fi
 
-  if [ ${LOG_LEVEL} -eq 0 ]; then LOG_LEVEL=OFF
-  elif [ ${LOG_LEVEL} -eq 1 ]; then LOG_LEVEL=CRITICAL
-  elif [ ${LOG_LEVEL} -eq 2 ]; then LOG_LEVEL=WARN
-  elif [ ${LOG_LEVEL} -eq 3 ]; then LOG_LEVEL=INFO
-  elif [ ${LOG_LEVEL} -eq 4 ]; then LOG_LEVEL=DEBUG
+  if [ ${LOCAL_LOG_LEVEL} -eq 0 ]; then LOCAL_LOG_LEVEL=OFF
+  elif [ ${LOCAL_LOG_LEVEL} -eq 1 ]; then LOCAL_LOG_LEVEL=CRITICAL
+  elif [ ${LOCAL_LOG_LEVEL} -eq 2 ]; then LOCAL_LOG_LEVEL=WARN
+  elif [ ${LOCAL_LOG_LEVEL} -eq 3 ]; then LOCAL_LOG_LEVEL=INFO
+  elif [ ${LOCAL_LOG_LEVEL} -eq 4 ]; then LOCAL_LOG_LEVEL=DEBUG
   fi
 
   echo $SOURCE
-  echo $LOG_LEVEL
+  echo $LOCAL_LOG_LEVEL
   echo $DESCRIPTION
   echo $COLLECTION_UUID
   
-  sqlite3 ${DATABASE_FILENAME} "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('${LOG_LEVEL}', '${DESCRIPTION}', '${SOURCE}', '${COLLECTION_UUID}')"
+  sqlite3 ${DATABASE_FILENAME} "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('${LOCAL_LOG_LEVEL}', '${DESCRIPTION}', '${SOURCE}', '${COLLECTION_UUID}')"
 
 }
 
