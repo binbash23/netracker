@@ -13,11 +13,11 @@
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
   DATABASE_Path       = $PSScriptRoot + "\collector.db"
-  AuthToken           = $null
+  loglevel            = 4
   StartTime           = $null
   RefreshTime         = $null
 }
-New-Variable -Name DynDnsSession  -Value $CollectorConfig -Scope Script -Force
+New-Variable -Name DynDnsSession -Value $CollectorConfig -Scope Script -Force
 
 
 #endregion Config
@@ -36,20 +36,23 @@ This command checks if the PSSQLite module is installed and installs it with adm
 #>
 function Search-PSSQLiteModule 
 {
-  
   # Check if PSSQLite module is installed
-if (-not(Get-Module -Name PSSQLite)) {
-  # Install PSSQLite module with administrator rights
-  try {
-    Start-Process powershell.exe -Verb runAs -ArgumentList "-Command Install-Module -Name PSSQLite -Force -Scope AllUsers" -Wait
-  }
+if (-not(Get-Module -Name PSSQLite)) 
+{
+  try   {
+          Import-Module PSSQLite
+        }
   catch {
-    Write-Error "Failed to install the PSSQLite module with administrator rights. Please install it manually and run the script again."
-    return
+          Write-Error "Import-Module PSSQLite failed"
+        try   {
+                # Install PSSQLite module with administrator rights
+                Start-Process powershell.exe -Verb runAs -ArgumentList "-Command Install-Module -Name PSSQLite -Force -Scope AllUsers" -Wait -PassThru
+              }
+        catch {
+                Write-Error "Failed to install the PSSQLite module with administrator rights. Please install it manually and run the script again."
+                Exit
+              }
   }}
-
-Import-Module PSSQLite
-
 }
 
 function Get-TimeStamp 
@@ -57,8 +60,21 @@ function Get-TimeStamp
   return $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 }
 
+function New-GUID {
+return [guid]::NewGuid().ToString()  
+}
+
 function New-log2sqlite
 {
+  [CmdletBinding()]
+  param (
+      [Parameter()]
+      [string]
+      $DESCRIPTION,
+      [Parameter()]
+      [string]
+      $logLevel = ''
+  )
     try {
       Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_Path 
     }
