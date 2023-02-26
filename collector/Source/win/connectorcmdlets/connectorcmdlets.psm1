@@ -14,8 +14,7 @@ if (-not(Get-Module -Name PSSQLite)) {
     catch {
       Write-Error "Failed to install the SimplySql module with administrator rights. Please install it manually and run the script again."
       return
-    }
-}
+    }}
 
 Import-Module PSSQLite
 
