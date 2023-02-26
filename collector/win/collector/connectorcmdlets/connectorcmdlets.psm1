@@ -70,6 +70,7 @@ function New-GUID {
 # 2=WARN
 # 3=INFO
 # 4=DEBUG
+#
 
 function log() {
   param(
