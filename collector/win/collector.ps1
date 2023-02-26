@@ -8,7 +8,7 @@
 
 # The connectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
-Import-Module .\win\connectorcmdlets\connectorcmdlets.psm1
+Import-Module .\collector\win\connectorcmdlets\connectorcmdlets.psm1
 
 # Search PSSQLite Module, if it didn't exist, it will be installed 
 Search-PSSQLiteModule 
@@ -19,7 +19,7 @@ Search-PSSQLiteModule
 $UUID = New-GUID
 $CollectorConfig = Get-CollectorConfig
 $DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
-$Check_Sys_config_tbl = "CREATE TABLE IF NOT EXISTS 'sys_config' ('DB_UUID' TEXT,'CREATE_DATE' datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),'PROPERTY' TEXT,'VALUE' TEXT,PRIMARY KEY('PROPERTY') );"
+$Create_collector_db = $(get-content  .\collector\create_collector_database.sql -raw).Split(';')
 $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
 
@@ -29,18 +29,21 @@ Write-Verbose "Checking collector database... $DB_Path "
 if($(Test-path -Path $DB_Path ) -ne $true)
 {
     try {
-        Invoke-SqliteQuery -DataSource $DB_Path -Query $Check_Sys_config_tbl
+        foreach($Query in $Create_collector_db)
+        {
+            Invoke-SqliteQuery -DataSource $DB_Path -Query $Query
+        }
         Write-Verbose "collector database created..."
     }
     catch {
         Write-Verbose "collector database creation failed ..."
     }
 }
-
+<#
 Write-Verbose "Creating initial db entry"
 $Initial_Statement = "INSERT INTO sys_config (DB_UUID, PROPERTY, VALUE) VALUES ('$($UUID)', 'Collector DB Created', '100');"
 Invoke-SqliteQuery -DataSource $DB_Path -Query $Initial_Statement
-
+#>
 
 
 
