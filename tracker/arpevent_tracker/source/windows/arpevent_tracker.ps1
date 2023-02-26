@@ -21,8 +21,6 @@ Import-Module PSSQLite
 
 #region Config
 
-
-
 $DB_FILENAME = 'tracker.db'
 $DB_PATH = Join-Path -Path $PSScriptRoot -ChildPath $DB_FILENAME
 
