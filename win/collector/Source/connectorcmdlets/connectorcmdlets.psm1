@@ -10,6 +10,16 @@
 
 #region Config
 
+$CollectorConfig = [ordered]@{
+  DATABASE_FILENAME   = "collector.db"
+  DATABASE_Path       = $PSScriptRoot + "\collector.db"
+  AuthToken           = $null
+  StartTime           = $null
+  RefreshTime         = $null
+}
+New-Variable -Name DynDnsSession  -Value $CollectorConfig -Scope Script -Force
+
+
 #endregion Config
 
 #region cmdlets 
@@ -49,7 +59,12 @@ function Get-TimeStamp
 
 function New-log2sqlite
 {
-
+    try {
+      Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_Path 
+    }
+    catch {
+      <#Do this if a terminating exception happens#>
+    }
 }
 
 
