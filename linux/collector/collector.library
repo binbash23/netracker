@@ -11,16 +11,31 @@
 DATABASE_FILENAME="collector.db"
 
 # Loglevel for every process. Possible values are:
-# 0=OFF
-# 1=CRITICAL
-# 2=WARN
-# 3=INFO
-# 4=DEBUG
-LOG_LEVEL=4
+# OFF
+# CRITICAL
+# WARN
+# INFO
+# DEBUG
+LOG_LEVEL=DEBUG
 
 function log() {
+
+  local SOURCE="${1}"
+  local DESCRIPTION="${2}"
+  local LOGLEVEL="${3}"
+  local COLLECTION_UUID="${4}"
+
+  local SOURCE="${SOURCE:=unknown}"
+  #local DESCRIPTION="${2}"
+  local LOGLEVEL="${LOGLEVEL:=INFO}"
+  local COLLECTION_UUID="${COLLECTION_UUID:=-1}"
+
+  #echo $SOURCE
+  #echo $LOGLEVEL
+  #echo $DESCRIPTION
+  #echo $COLLECTION_UUID
   
-  sqlite3 ${DATABASE_FILENAME} "insert into log (LOGLEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ()"
+  sqlite3 ${DATABASE_FILENAME} "insert into log (LOGLEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('${LOG_LEVEL}', '${DESCRIPTION}', '${SOURCE}', '${COLLECTION_UUID}')"
 
 }
 

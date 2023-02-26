@@ -14,5 +14,12 @@ CREATE TABLE IF NOT EXISTS "sys_config" (
         "VALUE" TEXT,
         PRIMARY KEY("PROPERTY")
 );
-
+CREATE TABLE IF NOT EXISTS "log" (
+        "ID"      INTEGER PRIMARY KEY AUTOINCREMENT,
+        "CREATE_DATE" datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
+        "LOGLEVEL" TEXT,
+        "DESCRIPTION" TEXT not null,
+        "SOURCE" TEXT,
+        "COLLECTION_UUID" TEXT
+);
 
