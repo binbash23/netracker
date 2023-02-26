@@ -11,31 +11,38 @@
 DATABASE_FILENAME="collector.db"
 
 # Loglevel for every process. Possible values are:
-# OFF
-# CRITICAL
-# WARN
-# INFO
-# DEBUG
-LOG_LEVEL=DEBUG
+# 0=OFF
+# 1=CRITICAL
+# 2=WARN
+# 3=INFO
+# 4=DEBUG
+LOG_LEVEL=4
 
 function log() {
 
   local SOURCE="${1}"
   local DESCRIPTION="${2}"
-  local LOGLEVEL="${3}"
+  local LOG_LEVEL="${3}"
   local COLLECTION_UUID="${4}"
 
   local SOURCE="${SOURCE:=unknown}"
   #local DESCRIPTION="${2}"
-  local LOGLEVEL="${LOGLEVEL:=INFO}"
+  local LOG_LEVEL="${LOG_LEVEL:=3}"
   local COLLECTION_UUID="${COLLECTION_UUID:=-1}"
 
-  #echo $SOURCE
-  #echo $LOGLEVEL
-  #echo $DESCRIPTION
-  #echo $COLLECTION_UUID
+  if [ ${LOG_LEVEL} -eq 0 ]; then LOG_LEVEL=OFF
+  elif [ ${LOG_LEVEL} -eq 1 ]; then LOG_LEVEL=CRITICAL
+  elif [ ${LOG_LEVEL} -eq 2 ]; then LOG_LEVEL=WARN
+  elif [ ${LOG_LEVEL} -eq 3 ]; then LOG_LEVEL=INFO
+  elif [ ${LOG_LEVEL} -eq 4 ]; then LOG_LEVEL=DEBUG
+  fi
+
+  echo $SOURCE
+  echo $LOG_LEVEL
+  echo $DESCRIPTION
+  echo $COLLECTION_UUID
   
-  sqlite3 ${DATABASE_FILENAME} "insert into log (LOGLEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('${LOG_LEVEL}', '${DESCRIPTION}', '${SOURCE}', '${COLLECTION_UUID}')"
+  sqlite3 ${DATABASE_FILENAME} "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('${LOG_LEVEL}', '${DESCRIPTION}', '${SOURCE}', '${COLLECTION_UUID}')"
 
 }
 
