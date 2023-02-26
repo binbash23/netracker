@@ -26,33 +26,33 @@ Import-Module PSSQLite
 
 $DB_FILENAME = 'collector.db'
 $DB_PATH = Join-Path -Path $PSScriptRoot -ChildPath $DB_FILENAME
-
-$Check_Sys_config_tbl = 'CREATE TABLE IF NOT EXISTS "sys_config" (
-    "DB_UUID" TEXT,
-  "CREATE_DATE"	 datetime not null default (datetime(CURRENT_TIMESTAMP, "localtime")),
-  "PROPERTY"      TEXT,
-  "VALUE" TEXT,
-  PRIMARY KEY("PROPERTY")
-);'
+$UUID = [guid]::NewGuid().ToString()
+$Check_Sys_config_tbl = "CREATE TABLE IF NOT EXISTS 'sys_config' (     'DB_UUID' TEXT,   'CREATE_DATE' datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),   'PROPERTY' TEXT,   'VALUE' TEXT,   PRIMARY KEY('PROPERTY') );"
 $VerbosePreference = "Continue" # "SilentlyContinue"
 
 #endregion Config
 
 #region Main 
-
 Write-Verbose "Running $PSCommandPath"
 
-Write-Verbose "Checking netracker database..."
+Write-Verbose "Checking collector database..."
 if($(Test-path -Path $($PSScriptRoot + '\' + $DB_FILENAME)) -ne $true)
 {
     try {
         Invoke-SqliteQuery -DataSource $DB_PATH -Query $Check_Sys_config_tbl
-        Write-Verbose "netracker database created..."
+        Write-Verbose "collector database created..."
     }
     catch {
-        Write-Verbose "netracker database creation failed ..."
+        Write-Verbose "collector database creation failed ..."
     }
 }
+
+Write-Verbose "Creating initial db entry"
+$Initial_Statement = "INSERT INTO sys_config (DB_UUID, PROPERTY, VALUE) VALUES ('$($UUID)', 'Collector DB Created', '100');"
+
+Invoke-SqliteQuery -DataSource $DB_PATH -Query $Initial_Statement
+
+
 
 
 #endregion Main
