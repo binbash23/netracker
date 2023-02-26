@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS "arpevent" (
 	PRIMARY KEY("UUID")
 );
 CREATE TABLE IF NOT EXISTS "sys_config" (
+        "CREATE_DATE" datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
         "PROPERTY"      TEXT,
         "VALUE" TEXT,
         PRIMARY KEY("PROPERTY")
