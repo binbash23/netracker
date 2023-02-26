@@ -3,7 +3,7 @@
 # jens heine <binbash@gmx.net>, andreas stoecker <a.stoecker@gmx.net>
 #
 # collector.lib will be sourced by every tracker module to provide
-# globlal variables (like collector.db filename etc) and
+# global variables (like collector.db filename etc) and
 # usefull global functions like logging etc.
 #
 
