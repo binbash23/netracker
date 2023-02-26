@@ -29,32 +29,35 @@ echo "Running $0"
 
 [ -z "${DATABASE_FILENAME}" ] && { echo "Database filename not set."; exit 1; }
 
-echo "Checking database..."
+echo "Checking/creating database structure..."
 sqlite3 ${DATABASE_FILENAME} < ${DB_CREATE_SCRIPT_FILENAME}
 
-echo "Checking sys_config property: OS..."
+echo -n "Checking sys_config property: OS..."
 ROW=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='OS'"`
 if [ ! -z "${ROW}" ]; then
-  echo "Property OS exists."
+  echo " OK"
 else
+  echo
   echo "Creating OS property..."
   sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('OS', 'linux')"
 fi
 
-echo "Checking sys_config property: DATABASE_CREATE_DATE..."
+echo -n "Checking sys_config property: DATABASE_CREATE_DATE..."
 ROW=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='DATABASE_CREATE_DATE'"`
 if [ ! -z "${ROW}" ]; then
-  echo "DATABASE_CREATE_DATE exists."
+  echo " OK"
 else
+  echo
   echo "DATABASE_CREATE_DATE is missing, inserting new DATABASE_CREATE_DATE..."
   sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('DATABASE_CREATE_DATE', datetime(CURRENT_TIMESTAMP, 'localtime'))"
 fi
 
-echo "Checking sys_config property: DATABASE_UUID..."
+echo -n "Checking sys_config property: DATABASE_UUID..."
 UUID=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='DATABASE_UUID'"`
 if [ ! -z "${UUID}" ]; then
-  echo "DATABASE_UUID exists."
+  echo " OK"
 else
+  echo
   echo "DATABASE_UUID is missing, inserting new DATABASE_UUID..."
   UUID=`uuidgen`
 sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('DATABASE_UUID', '${UUID}')"
