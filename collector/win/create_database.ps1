@@ -1,7 +1,6 @@
 <#
     Author: Jens Heine & Andreas Stöcker
-    Purpose: the collector script takes responsibility of the executed tracker, 
-             it also takes care of the Main Database   
+    Purpose: takes care of the Main Database   
 #>
 
 #region Dependencies
@@ -24,6 +23,24 @@ $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
 
 #region Main 
+Write-Verbose "Running $PSCommandPath"
+Write-Verbose "Checking collector database... $DB_Path "
+if($(Test-path -Path $DB_Path ) -ne $true)
+{
+    try {
+            Invoke-SqliteQuery -DataSource $DB_Path -Query $Create_collector_db
+            Write-Verbose "collector database created..."
+        }
+    catch {
+            Write-Verbose "collector database creation failed ..."
+          }
+}
+<#
+Write-Verbose "Creating initial db entry"
+$Initial_Statement = "INSERT INTO sys_config (DB_UUID, PROPERTY, VALUE) VALUES ('$($UUID)', 'Collector DB Created', '100');"
+Invoke-SqliteQuery -DataSource $DB_Path -Query $Initial_Statement
+#>
+
 
 
 #endregion Main
