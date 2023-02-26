@@ -40,7 +40,6 @@ if($(Test-path -Path $($PSScriptRoot + '\' + $DB_FILENAME)) -ne $true)
 
 Write-Verbose "Creating initial db entry"
 $Initial_Statement = "INSERT INTO sys_config (DB_UUID, PROPERTY, VALUE) VALUES ('$($UUID)', 'Collector DB Created', '100');"
-
 Invoke-SqliteQuery -DataSource $DB_PATH -Query $Initial_Statement
 
 
