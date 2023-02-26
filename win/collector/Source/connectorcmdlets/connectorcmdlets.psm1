@@ -14,11 +14,8 @@ $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
   DATABASE_Path       = $PSScriptRoot + "\collector.db"
   loglevel            = 4
-  StartTime           = $null
-  RefreshTime         = $null
 }
 New-Variable -Name DynDnsSession -Value $CollectorConfig -Scope Script -Force
-
 
 #endregion Config
 
@@ -61,7 +58,7 @@ function Get-TimeStamp
 }
 
 function New-GUID {
-return [guid]::NewGuid().ToString()  
+  return [guid]::NewGuid().ToString()  
 }
 
 function New-log2sqlite

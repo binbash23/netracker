@@ -20,7 +20,6 @@ $CollectorConfig.DATABASE_Path
 $UUID = New-GUID
 $Check_Sys_config_tbl = "CREATE TABLE IF NOT EXISTS 'sys_config' (     'DB_UUID' TEXT,   'CREATE_DATE' datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),   'PROPERTY' TEXT,   'VALUE' TEXT,   PRIMARY KEY('PROPERTY') );"
 $VerbosePreference = "Continue" # "SilentlyContinue"
-
 #endregion Config
 
 #region Main 
