@@ -5,18 +5,13 @@ Purpose: Track arp events and write information in sqlite db
 
 #region Dependencies
 
-# Check if SimplySql module is installed
-if (-not(Get-Module -Name PSSQLite)) {
-    # Install SimplySql module with administrator rights
-    try {
-      Start-Process powershell.exe -Verb runAs -ArgumentList "-Command Install-Module -Name PSSQLite -Force -Scope AllUsers" -Wait
-    }
-    catch {
-      Write-Error "Failed to install the SimplySql module with administrator rights. Please install it manually and run the script again."
-      return
-    }
-}
-Import-Module PSSQLite
+# The connectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
+# a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
+Import-Module .\win\collector\connectorcmdlets\connectorcmdlets.psm1
+
+# Search PSSQLite Module, if it didn't exist, it will be installed 
+Search-PSSQLiteModule 
+
 #endregion Dependencies
 
 #region Config
@@ -56,9 +51,7 @@ if (-not(Test-Path -Path $DB_PATH)) {
 
 Get-NetNeighbor | Select-Object -Property * |
 ForEach-Object {
-    #$line_array = $_.Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)
-    
-    $uuid = [guid]::NewGuid().ToString()
+    $uuid = New-Guid
     $insert_sql = @"
 INSERT INTO arpevent (
     UUID, 
