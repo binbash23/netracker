@@ -6,19 +6,10 @@
 
 #region Dependencies
 
-# Check if SimplySql module is installed
-if (-not(Get-Module -Name PSSQLite)) {
-    # Install SimplySql module with administrator rights
-    try {
-      Start-Process powershell.exe -Verb runAs -ArgumentList "-Command Install-Module -Name PSSQLite -Force -Scope AllUsers" -Wait
-    }
-    catch {
-      Write-Error "Failed to install the SimplySql module with administrator rights. Please install it manually and run the script again."
-      return
-    }
-}
+Import-Module .\win\collector\source\connectorcmdlets\connectorcmdlets.psm1
 
-Import-Module PSSQLite
+# Search PSSQLite Module, if it didn't exist, it will be installed 
+Search-PSSQLiteModule 
 
 #endregion Dependencies
 
