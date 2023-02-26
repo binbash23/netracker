@@ -5,21 +5,24 @@
 
 #region Dependencies
 
-
 #endregion Dependencies
 
 #region Config
 
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
-  DATABASE_Path       = $PSScriptRoot + "\collector.db"
   loglevel            = 4
 }
-New-Variable -Name DynDnsSession -Value $CollectorConfig -Scope Script -Force
+New-Variable -Name CollectorConfig -Value $CollectorConfig -Force
 
 #endregion Config
 
 #region cmdlets 
+
+function Get-CollectorConfig {
+  $CollectorConfig | ConvertTo-Json | ConvertFrom-Json
+}
+
 
 <#
 .Synopsis
@@ -60,6 +63,13 @@ function Get-TimeStamp
 function New-GUID {
   return [guid]::NewGuid().ToString()  
 }
+
+# Loglevel for every process. Possible values are:
+# 0=OFF
+# 1=CRITICAL
+# 2=WARN
+# 3=INFO
+# 4=DEBUG
 
 function New-log2sqlite
 {

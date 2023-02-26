@@ -16,20 +16,20 @@ Search-PSSQLiteModule
 #endregion Dependencies
 
 #region Config
-$CollectorConfig.DATABASE_Path
 $UUID = New-GUID
-$Check_Sys_config_tbl = "CREATE TABLE IF NOT EXISTS 'sys_config' (     'DB_UUID' TEXT,   'CREATE_DATE' datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),   'PROPERTY' TEXT,   'VALUE' TEXT,   PRIMARY KEY('PROPERTY') );"
+$CollectorConfig = Get-CollectorConfig
+$DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
+$Check_Sys_config_tbl = "CREATE TABLE IF NOT EXISTS 'sys_config' ('DB_UUID' TEXT,'CREATE_DATE' datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),'PROPERTY' TEXT,'VALUE' TEXT,PRIMARY KEY('PROPERTY') );"
 $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
 
 #region Main 
 Write-Verbose "Running $PSCommandPath"
-
-Write-Verbose "Checking collector database..."
-if($(Test-path -Path $CollectorConfig.DATABASE_Path) -ne $true)
+Write-Verbose "Checking collector database... $DB_Path "
+if($(Test-path -Path $DB_Path ) -ne $true)
 {
     try {
-        Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_Path -Query $Check_Sys_config_tbl
+        Invoke-SqliteQuery -DataSource $DB_Path -Query $Check_Sys_config_tbl
         Write-Verbose "collector database created..."
     }
     catch {
@@ -39,7 +39,7 @@ if($(Test-path -Path $CollectorConfig.DATABASE_Path) -ne $true)
 
 Write-Verbose "Creating initial db entry"
 $Initial_Statement = "INSERT INTO sys_config (DB_UUID, PROPERTY, VALUE) VALUES ('$($UUID)', 'Collector DB Created', '100');"
-Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_Path -Query $Initial_Statement
+Invoke-SqliteQuery -DataSource $DB_Path -Query $Initial_Statement
 
 
 
