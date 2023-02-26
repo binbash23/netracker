@@ -71,24 +71,35 @@ function New-GUID {
 # 3=INFO
 # 4=DEBUG
 
-function New-log2sqlite
-{
-  [CmdletBinding()]
-  param (
-      [Parameter()]
-      [string]
-      $DESCRIPTION,
-      [Parameter()]
-      [string]
-      $logLevel = ''
+function log() {
+  param(
+  [string]$SOURCE,
+  [string]$DESCRIPTION,
+  [int]$LOCAL_LOG_LEVEL,
+  [int]$COLLECTION_UUID
   )
-    try {
-      Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_Path 
-    }
-    catch {
-      <#Do this if a terminating exception happens#>
-    }
-}
-
-
+  $SOURCE = if ([string]::IsNullOrEmpty($SOURCE)) {"unknown"} else {$SOURCE}
+  $LOCAL_LOG_LEVEL = if ([string]::IsNullOrEmpty($LOCAL_LOG_LEVEL)) {3} else {$LOCAL_LOG_LEVEL}
+  $COLLECTION_UUID = if ([string]::IsNullOrEmpty($COLLECTION_UUID)) {-1} else {$COLLECTION_UUID}
+  
+  if ($LOCAL_LOG_LEVEL -gt $LOG_LEVEL) {
+      # loglevel is too low
+      return
+  }
+  
+  switch ($LOCAL_LOG_LEVEL) {
+      0 { $LOCAL_LOG_LEVEL = "OFF" }
+      1 { $LOCAL_LOG_LEVEL = "CRITICAL" }
+      2 { $LOCAL_LOG_LEVEL = "WARN" }
+      3 { $LOCAL_LOG_LEVEL = "INFO" }
+      4 { $LOCAL_LOG_LEVEL = "DEBUG" }
+  }
+  
+  Write-Host $SOURCE
+  Write-Host $LOCAL_LOG_LEVEL
+  Write-Host $DESCRIPTION
+  Write-Host $COLLECTION_UUID
+  
+  Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_FILENAME -Query "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('$LOCAL_LOG_LEVEL', '$DESCRIPTION', '$SOURCE', '$COLLECTION_UUID')"
+}  
 #endregion cmdlets
