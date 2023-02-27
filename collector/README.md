@@ -6,7 +6,10 @@
 
 # collector
 
-![collector-meta-schema](meta-schema.png)
+
+<p class="text-center">
+  <img src="meta-schema.png" alt="collector-meta-schema">
+</p>
 
 
 ## General Purpose:
