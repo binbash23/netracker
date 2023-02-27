@@ -19,7 +19,8 @@ Search-PSSQLiteModule
 $UUID = New-GUID
 $CollectorConfig = Get-CollectorConfig
 $DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
-$Create_collector_db = $(get-content  .\collector\create_collector_database.sql -raw)
+
+#$Create_collector_db = $(get-content  .\collector\create_collector_database.sql -raw)
 $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
 
