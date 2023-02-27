@@ -7,7 +7,7 @@
 #set -x
 
 #
-# Source main library
+# SOURCE LIBRARIES
 #
 . collector.library
 
@@ -49,7 +49,7 @@ function showUsage() {
 }
 
 #
-# Main
+# MAIN
 #
 echo "Running $0"
 
@@ -92,6 +92,9 @@ tracker_array=(`ls tracker/*/*_tracker.sh`)
 
 log $0 "Found ${#tracker_array[@]} trackers..."
 
+for current_tracker in ${tracker_array[@]}; do
+  log $0 "Starting tracker ${current_tracker}"
+done
 
 log $0 "Finished"
 
