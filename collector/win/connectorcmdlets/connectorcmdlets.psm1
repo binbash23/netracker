@@ -11,6 +11,7 @@
 
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
+  DATABASE_TBL_STRUCTURE = $(get-content  .\collector\create_collector_database.sql -raw)
   loglevel            = 4
 }
 New-Variable -Name CollectorConfig -Value $CollectorConfig -Force
@@ -104,3 +105,8 @@ function log() {
   Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_FILENAME -Query "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('$LOCAL_LOG_LEVEL', '$DESCRIPTION', '$SOURCE', '$COLLECTION_UUID')"
 }  
 #endregion cmdlets
+
+
+# Search PSSQLite Module, if it didn't exist, it will be installed 
+Search-PSSQLiteModule 
+$CollectorConfig = Get-CollectorConfig
