@@ -57,3 +57,8 @@ function log() {
 
 }
 
+function showLog() {
+  #sqlite3 ${DATABASE_FILENAME} "select * from log order by ID desc LIMIT 10"
+  sqlite3 ${DATABASE_FILENAME} "select CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from log order by ID LIMIT 10"
+}
+
