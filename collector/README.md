@@ -24,7 +24,7 @@ In a context like this with different os-collectors, it's mandatory to use a lig
 
 The Installation depends on the environment you want to use the collector framework. 
 
-The initial project has os collectors for <a href="https://github.com/binbash23/netracker/tree/master/collector/linux" title="linux">linux</a> and <a href="https://github.com/binbash23/netracker/tree/master/collector/windows" title="windows">windows</a>, further os-collectors are possible. 
+The initial project has os collectors for <a href="https://github.com/binbash23/netracker/tree/master/collector/linux" title="linux">linux</a> and <a href="https://github.com/binbash23/netracker/tree/master/collector/win" title="windows">windows</a>, further os-collectors are possible. 
 
 
 ## Contributing
