@@ -11,7 +11,7 @@
 
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
-  DATABASE_TBL_STRUCTURE = $(get-content  .\collector\create_collector_database.sql -raw)
+  DATABASE_TBL_STRUCTURE = $(get-content  ..\create_collector_database.sql -raw)
   loglevel            = 4
 }
 New-Variable -Name CollectorConfig -Value $CollectorConfig -Force

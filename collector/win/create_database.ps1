@@ -29,4 +29,5 @@ if($(Test-path -Path $DB_Path ) -ne $true)
             Write-Verbose "collector database creation failed ..."
           }
 }
+Start-Sleep -Seconds 60
 #endregion Main
