@@ -12,7 +12,7 @@
 </p>
 
 
-## General Purpose:
+## s
 
 The name of the tool describes the functionality as it's best. 
 It collects data, to do so it first takes care of an environment to store the collected data. 
