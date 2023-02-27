@@ -62,3 +62,7 @@ function showLog() {
   sqlite3 ${DATABASE_FILENAME} "select CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from (select ID, CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from log order by ID desc LIMIT 100) order by ID asc"
 }
 
+function deleteLog() {
+  sqlite3 ${DATABASE_FILENAME} "delete from log"
+}
+

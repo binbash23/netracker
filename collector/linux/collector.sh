@@ -24,6 +24,7 @@ USAGE
    collector [OPTIONS]
 
 OPTIONS
+        -D              : Delete/clear log table in database
         -h              : Show usage information
         -L              : Show latest log information from database
 
@@ -51,14 +52,14 @@ function showUsage() {
 #
 # MAIN
 #
-echo "Running $0"
-
-#while getopts "l:u:cCdDhnqS:tvV:" options;do
-while getopts "Lh" options;do
+while getopts "DLh" options;do
   case "$options" in
 #    l) LOGFILE="${OPTARG}"
 #       logDebug "Using custom log file: ${LOGFILE}"
 #       ;;
+    D) deleteLog
+       exit 0
+       ;;
     h) showUsage
        exit
        ;;
@@ -74,6 +75,8 @@ while getopts "Lh" options;do
   esac
 done
 
+
+echo "Running $0"
 
 [ -z "${DATABASE_FILENAME}" ] && { echo "Database filename not set."; exit 1; }
 
