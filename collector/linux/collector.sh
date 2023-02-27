@@ -23,8 +23,16 @@ echo "Checking database ${DATABASE_FILENAME}..."
 
 log $0 "Starting"
 
+# CREATING NEW COLLECTION
 current_collection_uuid=`uuidgen`
 log $0 "Creating new collection with UUID: ${current_collection_uuid}" 
+
+# DETECTING AVAILABLE TRACKERS
+log $0 "Detecting available trackers..."
+tracker_array=(`ls tracker/*/*_tracker.sh`)
+
+log $0 "Found ${#tracker_array[@]} trackers..."
+
 
 log $0 "Finished"
 
