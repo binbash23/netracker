@@ -27,10 +27,6 @@ The Installation depends on the environment you want to use the collector framew
 The initial project has os collectors for <a href="https://github.com/binbash23/netracker/tree/master/collector/linux" title="linux">linux</a> and <a href="https://github.com/binbash23/netracker/tree/master/collector/windows" title="windows">windows</a>, further os-collectors are possible. 
 
 
-## Usage
-
-Instructions for using the project go here.
-
 ## Contributing
 
 Instructions for contributing to the project go here.
