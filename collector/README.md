@@ -7,7 +7,7 @@
 # collector
 
 
-<p class="text-center">
+<p align="center">
   <img src="meta-schema.png" alt="collector-meta-schema">
 </p>
 
