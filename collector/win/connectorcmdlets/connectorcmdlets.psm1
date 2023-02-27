@@ -11,7 +11,8 @@
 
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
-  DATABASE_TBL_STRUCTURE = $(get-content  ..\create_collector_database.sql -raw)
+  PSModuleRoot = $PSScriptRoot
+  DATABASE_TBL_STRUCTURE = "create_collector_database.sql"
   loglevel            = 4
 }
 New-Variable -Name CollectorConfig -Value $CollectorConfig -Force
@@ -109,4 +110,3 @@ function log() {
 
 # Search PSSQLite Module, if it didn't exist, it will be installed 
 Search-PSSQLiteModule 
-$CollectorConfig = Get-CollectorConfig

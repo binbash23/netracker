@@ -1,3 +1,15 @@
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [switch]
+    $h,
+    [Parameter()]
+    [switch]
+    $D,
+    [Parameter()]
+    [switch]
+    $L
+)
 <#
     Author: Jens Heine & Andreas Stöcker
     Purpose: the collector script takes responsibility of the executed tracker, 
@@ -10,9 +22,6 @@
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
 Import-Module .\collector\win\connectorcmdlets\connectorcmdlets.psm1
 
-# Search PSSQLite Module, if it didn't exist, it will be installed 
-#Search-PSSQLiteModule 
-
 #endregion Dependencies
 
 #region Config
@@ -20,14 +29,61 @@ $UUID = New-GUID
 $CollectorConfig = Get-CollectorConfig
 $DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
 
-#$Create_collector_db = $(get-content  .\collector\create_collector_database.sql -raw)
+$USAGE_INFO_TEXT="
+
+  collector by Jens Heine <binbash@gmx.net> 2023
+           and Andreas Stoecker <a.stoecker@gmx.net>
+
+USAGE
+
+   collector [OPTIONS]
+
+OPTIONS
+        -D              : Delete/clear log table in database
+        -h              : Show usage information
+        -L              : Show latest log information from database
+
+  If you start with no options, the collector will create/check the collector
+  database and then run all trackers to collect information into the
+  collector database.
+
+EXAMPLES
+
+  Show current log/status information:
+  ./collector -L     
+
+  Show help:
+  ./collector -h
+
+"
+
 $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
 
 #region Main 
+
+if($h.IsPresent)
+{
+    Write-Host $USAGE_INFO_TEXT
+    exit
+}
+
+if($D.IsPresent)
+{
+
+    exit
+}
+
+if($L.IsPresent)
+{
+
+    exit
+}
+
+
 if($(Test-Path -Path $DB_Path) -eq $false)
 {
-    Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" -Wait 
+    Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" 
 }          
 
 #endregion Main
