@@ -6,6 +6,9 @@
 
 # collector
 
+![collector-meta-schema](meta-schema.png)
+
+
 ## General Purpose:
 
 The name of the tool describes the functionality as it's best. 
