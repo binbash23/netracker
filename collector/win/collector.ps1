@@ -11,13 +11,13 @@
 Import-Module .\collector\win\connectorcmdlets\connectorcmdlets.psm1
 
 # Search PSSQLite Module, if it didn't exist, it will be installed 
-Search-PSSQLiteModule 
+#Search-PSSQLiteModule 
 
 #endregion Dependencies
 
 #region Config
 $UUID = New-GUID
-$CollectorConfig = Get-CollectorConfig
+#$CollectorConfig = Get-CollectorConfig
 $DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
 
 #$Create_collector_db = $(get-content  .\collector\create_collector_database.sql -raw)
@@ -25,6 +25,9 @@ $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
 
 #region Main 
-
+if($(Test-Path -Path $DB_Path) -eq $false)
+{
+    Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`""
+}          
 
 #endregion Main

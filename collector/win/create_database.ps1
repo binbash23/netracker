@@ -12,7 +12,6 @@ Import-Module .\collector\win\connectorcmdlets\connectorcmdlets.psm1
 #endregion Dependencies
 
 #region Config
-
 $DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
 $VerbosePreference = "Continue" # "SilentlyContinue"
 #endregion Config
@@ -30,6 +29,4 @@ if($(Test-path -Path $DB_Path ) -ne $true)
             Write-Verbose "collector database creation failed ..."
           }
 }
-
-
 #endregion Main
