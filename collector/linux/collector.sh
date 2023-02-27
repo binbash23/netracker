@@ -23,6 +23,9 @@ echo "Checking database ${DATABASE_FILENAME}..."
 
 log $0 "Starting"
 
+current_collection_uuid=`uuidgen`
+log $0 "Creating new collection with UUID: ${current_collection_uuid}" 
+
 log $0 "Finished"
 
 echo $0 finished.

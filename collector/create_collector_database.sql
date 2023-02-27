@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS "log" (
         "ID"      INTEGER PRIMARY KEY AUTOINCREMENT,
         "CREATE_DATE" datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
         "LOG_LEVEL" TEXT,
-        "DESCRIPTION" TEXT not null,
+        "MESSAGE" TEXT not null,
         "SOURCE" TEXT,
         "COLLECTION_UUID" TEXT
 );
