@@ -26,7 +26,7 @@ LOG_LEVEL=4
 #
 function log() {
 
-  local SOURCE="${1}"
+  local SOURCE="`basename ${1}`"
   local MESSAGE="${2}"
   local LOCAL_LOG_LEVEL="${3}"
   local COLLECTION_UUID="${4}"

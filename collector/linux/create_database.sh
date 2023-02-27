@@ -25,7 +25,7 @@ DB_CREATE_SCRIPT_FILENAME='../create_collector_database.sql'
 #
 # Main
 #
-echo "Running $0"
+echo "Running `basename $0`"
 
 [ -z "${DATABASE_FILENAME}" ] && { echo "Database filename not set."; exit 1; }
 
@@ -63,7 +63,7 @@ else
 sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('DATABASE_UUID', '${UUID}')"
 fi
 
-echo $0 finished.
+echo "`basename $0` finished"
 
 
 

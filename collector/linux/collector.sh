@@ -76,7 +76,7 @@ while getopts "DLh" options;do
 done
 
 
-echo "Running $0"
+echo "Running `basename $0`"
 
 [ -z "${DATABASE_FILENAME}" ] && { echo "Database filename not set."; exit 1; }
 
@@ -100,6 +100,7 @@ for current_tracker in ${tracker_array[@]}; do
   log $0 "Starting tracker ${current_tracker}"
   cd `dirname ${current_tracker}`
   current_tracker_filename="./`basename ${current_tracker}`"
+  echo "Starting tracker: `basename ${current_tracker}`"
   $current_tracker_filename
   #./`basename ${current_tracker}`
   cd ${base_dir}
@@ -107,4 +108,4 @@ done
 
 log $0 "Finished"
 
-echo $0 finished.
+echo "`basename $0` finished."
