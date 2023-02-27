@@ -14,8 +14,8 @@
 
 ## General Purpose
 
-The name of the tool describes the functionality as it's best. 
-It collects data, to do so it first takes care of an environment to store the collected data. 
+The name of the tool describes the functionality as it's best. It collects data!
+To do so it uses a bunch full of functions and cmdlets that's been deliverd with the choosen os-collector package. It takes care of an environment to store the collected data. 
 In a context like this with different os-collectors, it's mandatory to use a lightweight database structure, therefore it's creating a SQLite Database. The DB table structure can be found underneath
 <a href="https://github.com/binbash23/netracker/blob/master/collector/create_collector_database.sql" title="../create_collector_database.sql">../create_collector_database.sql</a>. The seperation of the SQL db structure to a meta-level is due to the fact that all different 'os-collectors' should have access to the same database structure, to avoid future merge trouble shooting. 
 
