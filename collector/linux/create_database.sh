@@ -20,7 +20,7 @@
 #
 # Variables
 #
-DB_CREATE_SCRIPT_FILENAME='../create_database.sql'
+DB_CREATE_SCRIPT_FILENAME='../create_collector_database.sql'
 
 #
 # Main

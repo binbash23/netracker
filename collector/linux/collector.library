@@ -42,10 +42,10 @@ function log() {
   elif [ ${LOCAL_LOG_LEVEL} -eq 4 ]; then LOCAL_LOG_LEVEL=DEBUG
   fi
 
-  echo $SOURCE
-  echo $LOCAL_LOG_LEVEL
-  echo $DESCRIPTION
-  echo $COLLECTION_UUID
+  #echo $SOURCE
+  #echo $LOCAL_LOG_LEVEL
+  #echo $DESCRIPTION
+  #echo $COLLECTION_UUID
   
   sqlite3 ${DATABASE_FILENAME} "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('${LOCAL_LOG_LEVEL}', '${DESCRIPTION}', '${SOURCE}', '${COLLECTION_UUID}')"
 

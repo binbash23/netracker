@@ -21,4 +21,8 @@ echo "Running $0"
 echo "Checking database ${DATABASE_FILENAME}..."
 ./create_database.sh
 
+log $0 "Starting"
+
+log $0 "Finished"
+
 echo $0 finished.
