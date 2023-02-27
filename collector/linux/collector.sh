@@ -12,9 +12,68 @@
 . collector.library
 
 #
+# VARIABLES
+#
+USAGE_INFO_TEXT="
+
+  collector by Jens Heine <binbash@gmx.net> 2023
+           and Andreas Stoecker <a.stoecker@gmx.net>
+
+USAGE
+
+   collector [OPTIONS]
+
+OPTIONS
+        -h              : Show usage information
+        -L              : Show latest log information from database
+
+  If you start with no options, the collector will create/check the collector
+  database and then run all trackers to collect information into the
+  colelctor database.
+
+EXAMPLES
+
+  Show current log/status information:
+  ./collector -L     
+
+  Show help:
+  ./collector -h
+
+"
+
+#
+# FUNCTIONS
+#
+function showUsage() {
+  echo "$USAGE_INFO_TEXT"
+}
+
+#
 # Main
 #
 echo "Running $0"
+
+#while getopts "l:u:cCdDhnqS:tvV:" options;do
+while getopts "Lh" options;do
+  case "$options" in
+#    l) LOGFILE="${OPTARG}"
+#       logDebug "Using custom log file: ${LOGFILE}"
+#       ;;
+    h) showUsage
+       exit
+       ;;
+    L) showLog
+       exit 0
+       ;;
+#    v) showVersionInfo
+#       exit 0
+#       ;;
+    *) showUsage
+       exit 0
+       ;;
+  esac
+done
+
 
 [ -z "${DATABASE_FILENAME}" ] && { echo "Database filename not set."; exit 1; }
 
