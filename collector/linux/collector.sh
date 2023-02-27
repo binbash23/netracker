@@ -92,8 +92,14 @@ tracker_array=(`ls tracker/*/*_tracker.sh`)
 
 log $0 "Found ${#tracker_array[@]} trackers..."
 
+base_dir=`pwd`
 for current_tracker in ${tracker_array[@]}; do
   log $0 "Starting tracker ${current_tracker}"
+  cd `dirname ${current_tracker}`
+  current_tracker_filename="./`basename ${current_tracker}`"
+  $current_tracker_filename
+  #./`basename ${current_tracker}`
+  cd ${base_dir}
 done
 
 log $0 "Finished"
