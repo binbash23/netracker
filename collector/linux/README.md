@@ -1,3 +1,5 @@
+
+```bash
 USAGE
 
    collector [OPTIONS]
@@ -18,3 +20,4 @@ EXAMPLES
 
   Show help:
   ./collector -h
+```
