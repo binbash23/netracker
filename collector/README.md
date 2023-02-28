@@ -20,12 +20,13 @@ To do so it uses a bunch full of functions and cmdlets that's been deliverd with
 ### lib
 Contains the used functions and cmdlets that can be reused during collector and tracker work.
 
+### tracker 
+Every tracker works independent. Depending on the configured trackers, the collector starts a que to run each one of them. Every que is unique and has it's own collection of tracking information that will be stored in the collector.db.
+
 ### db 
 The db table structure can be found underneath
 <a href="https://github.com/binbash23/netracker/blob/master/collector/create_collector_database.sql" title="../create_collector_database.sql">../create_collector_database.sql</a>. The seperation of the SQL db structure to a meta-level is due to the fact that all different collectors should have access to the same database structure, to avoid future merge trouble shooting. We use a lightweight SQLite database.
 
-### tracker 
-Every tracker works independent. Depending on the configured trackers, the collector starts a que to run each one of them. Every que is unique and has it's own collection of tracking information that will be stored in the collector.db.
 
 
 
