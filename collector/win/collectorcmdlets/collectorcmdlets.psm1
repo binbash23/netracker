@@ -12,7 +12,7 @@
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
   DATABASE_TBL_STRUCTURE = "create_collector_database.sql"
-  loglevel            = 4
+  loglevel            = "4"
 }
 New-Variable -Name CollectorConfig -Value $CollectorConfig -Force
 
@@ -72,22 +72,23 @@ function New-GUID {
 # 3=INFO
 # 4=DEBUG
 #
-
-function log() {
+$LOCAL_LOG_LEVEL = $CollectorConfig.loglevel
+function New-logEntry {
   param(
   [string]$SOURCE,
-  [string]$DESCRIPTION,
-  [int]$LOCAL_LOG_LEVEL,
-  [int]$COLLECTION_UUID
+  [string]$MESSAGE,
+  [string]$LOCAL_LOG_LEVEL,
+  [string]$COLLECTION_UUID
   )
+  
   $SOURCE = if ([string]::IsNullOrEmpty($SOURCE)) {"unknown"} else {$SOURCE}
   $LOCAL_LOG_LEVEL = if ([string]::IsNullOrEmpty($LOCAL_LOG_LEVEL)) {3} else {$LOCAL_LOG_LEVEL}
   $COLLECTION_UUID = if ([string]::IsNullOrEmpty($COLLECTION_UUID)) {-1} else {$COLLECTION_UUID}
   
-  if ($LOCAL_LOG_LEVEL -gt $LOG_LEVEL) {
+  <#if ($LOCAL_LOG_LEVEL -gt $LOG_LEVEL) {
       # loglevel is too low
       return
-  }
+  }#>
   
   switch ($LOCAL_LOG_LEVEL) {
       0 { $LOCAL_LOG_LEVEL = "OFF" }
@@ -97,15 +98,20 @@ function log() {
       4 { $LOCAL_LOG_LEVEL = "DEBUG" }
   }
   
-  Write-Host $SOURCE
-  Write-Host $LOCAL_LOG_LEVEL
-  Write-Host $DESCRIPTION
-  Write-Host $COLLECTION_UUID
-  
-  Invoke-SqliteQuery -DataSource $CollectorConfig.DATABASE_FILENAME -Query "insert into log (LOG_LEVEL, DESCRIPTION, SOURCE, COLLECTION_UUID) values ('$LOCAL_LOG_LEVEL', '$DESCRIPTION', '$SOURCE', '$COLLECTION_UUID')"
+  #Write-Host $SOURCE
+  #Write-Host $LOCAL_LOG_LEVEL
+  #Write-Host $MESSAGE
+  #Write-Host $COLLECTION_UUID
+  $RootPath =  Split-Path $PSScriptRoot -Parent
+  #$LogPath = $($RootPath + '\log.txt')
+  # "Calling Log Function with Source: $SOURCE Local_log_Level: $LOCAL_LOG_LEVEL MESSAGE: $MESSAGE CollectionUUID: $COLLECTION_UUID" | Out-File $LogPath -Append
+  Invoke-SqliteQuery -DataSource $($RootPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "insert into log (LOG_LEVEL, MESSAGE, SOURCE, COLLECTION_UUID) values ('$LOCAL_LOG_LEVEL', '$MESSAGE', '$SOURCE', '$COLLECTION_UUID')"
 }  
 #endregion cmdlets
 
-
 # Search PSSQLite Module, if it didn't exist, it will be installed 
 Search-PSSQLiteModule 
+
+#New-logEntry -SOURCE $0 -DESCRIPTION "Starting"
+
+

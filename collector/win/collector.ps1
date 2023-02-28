@@ -83,7 +83,31 @@ if($L.IsPresent)
 
 if($(Test-Path -Path $DB_Path) -eq $false)
 {
-    Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" 
+    Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" -Wait
 }          
+
+New-logEntry -SOURCE $0 -Message "Starting"
+
+# CREATING NEW COLLECTION
+$current_collection_uuid = New-Guid
+New-logEntry -SOURCE $0 -Message "Creating new collection with UUID: $($current_collection_uuid)" 
+
+# DETECTING AVAILABLE TRACKERS
+New-logEntry -SOURCE $0 -Message "Detecting available trackers..."
+$TrackerPath = $($PSScriptRoot +"\tracker\")
+$tracker_array= Get-ChildItem $TrackerPath -Recurse | Where-Object {$_.FullName -like "*_tracker.ps1"}
+
+New-logEntry -SOURCE $0 -Message "Found $($tracker_array.count) trackers..."
+
+foreach($tracker in $tracker_array)
+{
+    New-logEntry -SOURCE $0 -Message "Starting tracker $($tracker.Name)"
+    if($(Test-Path -Path $($tracker.FullName)) -eq $true)
+    {
+        Start-Process powershell.exe -ArgumentList "-File `"$($tracker.FullName)`"" -Wait -NoNewWindow
+        Write-Verbose "Starting tracker $($tracker.FullName)"
+    } 
+}
+New-logEntry -SOURCE $0 -Message "Finished"
 
 #endregion Main

@@ -8,6 +8,7 @@ Purpose: Track arp events and write information in sqlite db
 # The connectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
 Import-Module .\collector\win\collectorcmdlets\collectorcmdlets.psm1
+
 # Search PSSQLite Module, if it didn't exist, it will be installed 
 Search-PSSQLiteModule 
 
