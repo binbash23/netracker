@@ -34,7 +34,7 @@ Every tracker works independent. Depending on the configured trackers, the colle
 
 The Installation depends on the environment you want to use the collector framework. 
 
-The initial project has collectors for <a href="https://github.com/binbash23/netracker/tree/master/collector/linux" title="linux">linux</a> and <a href="https://github.com/binbash23/netracker/tree/master/collector/win" title="windows">windows</a>, further os-collectors are possible. 
+The initial project has collectors for <a href="https://github.com/binbash23/netracker/tree/master/collector/linux" title="linux">linux</a> and <a href="https://github.com/binbash23/netracker/tree/master/collector/win" title="windows">windows</a>.
 
 
 </body>
