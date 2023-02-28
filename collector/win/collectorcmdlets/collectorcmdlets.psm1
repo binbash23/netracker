@@ -1,6 +1,6 @@
 <#
     Author: Jens Heine & Andreas Stöcker
-    Purpose: connectorcmdlets PS-Module delivers 
+    Purpose: collectorcmdlets PS-Module delivers 
 #>
 
 #region Dependencies
@@ -11,7 +11,6 @@
 
 $CollectorConfig = [ordered]@{
   DATABASE_FILENAME   = "collector.db"
-  PSModuleRoot = $PSScriptRoot
   DATABASE_TBL_STRUCTURE = "create_collector_database.sql"
   loglevel            = 4
 }
