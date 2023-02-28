@@ -70,13 +70,13 @@ if($h.IsPresent)
 
 if($D.IsPresent)
 {
-
+    delete-Log
     exit
 }
 
 if($L.IsPresent)
 {
-
+    show-Log
     exit
 }
 

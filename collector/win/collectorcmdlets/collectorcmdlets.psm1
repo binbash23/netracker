@@ -102,11 +102,26 @@ function New-logEntry {
   #Write-Host $LOCAL_LOG_LEVEL
   #Write-Host $MESSAGE
   #Write-Host $COLLECTION_UUID
-  $RootPath =  Split-Path $PSScriptRoot -Parent
-  #$LogPath = $($RootPath + '\log.txt')
+  $ScriptRootParentPath =  Split-Path $PSScriptRoot -Parent
+  #$LogPath = $($ScriptRootParentPath + '\log.txt')
   # "Calling Log Function with Source: $SOURCE Local_log_Level: $LOCAL_LOG_LEVEL MESSAGE: $MESSAGE CollectionUUID: $COLLECTION_UUID" | Out-File $LogPath -Append
-  Invoke-SqliteQuery -DataSource $($RootPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "insert into log (LOG_LEVEL, MESSAGE, SOURCE, COLLECTION_UUID) values ('$LOCAL_LOG_LEVEL', '$MESSAGE', '$SOURCE', '$COLLECTION_UUID')"
+  Invoke-SqliteQuery -DataSource $($ScriptRootParentPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "insert into log (LOG_LEVEL, MESSAGE, SOURCE, COLLECTION_UUID) values ('$LOCAL_LOG_LEVEL', '$MESSAGE', '$SOURCE', '$COLLECTION_UUID')"
 }  
+
+function show-Log {
+  #sqlite3 ${DATABASE_FILENAME} "select * from log order by ID desc LIMIT 10"
+  $ScriptRootParentPath =  Split-Path $PSScriptRoot -Parent
+  Invoke-SqliteQuery -DataSource $($ScriptRootParentPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "select CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from (select ID, CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from log order by ID desc LIMIT 100) order by ID asc"
+}
+
+function delete-Log {
+  $ScriptRootParentPath =  Split-Path $PSScriptRoot -Parent
+  Invoke-SqliteQuery -DataSource $($ScriptRootParentPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "delete from log"
+}
+
+
+
+
 #endregion cmdlets
 
 # Search PSSQLite Module, if it didn't exist, it will be installed 
