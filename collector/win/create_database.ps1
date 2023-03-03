@@ -9,7 +9,7 @@ $VerbosePreference = "Continue" # "SilentlyContinue"
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
 
 $ModulPath = $PSScriptRoot + '\collectorcmdlets\collectorcmdlets.psm1'
-Write-Verbose "path  ... $ModulPath"
+
 Import-Module $ModulPath
 
 #endregion Dependencies

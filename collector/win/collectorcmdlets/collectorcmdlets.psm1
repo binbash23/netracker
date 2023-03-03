@@ -114,10 +114,11 @@ function show-Log {
   Invoke-SqliteQuery -DataSource $($ScriptRootParentPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "select CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from (select ID, CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from log order by ID desc LIMIT 100) order by ID asc"
 }
 
-function delete-Log {
+function remove-Log {
   $ScriptRootParentPath =  Split-Path $PSScriptRoot -Parent
   Invoke-SqliteQuery -DataSource $($ScriptRootParentPath +'\'+ $CollectorConfig.DATABASE_FILENAME)-Query "delete from log"
 }
+
 
 
 

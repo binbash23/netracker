@@ -57,7 +57,7 @@ EXAMPLES
 
 "
 
-$VerbosePreference = "Continue" # "SilentlyContinue"
+$VerbosePreference = "Continue" # "SilentlyContinue" # 
 #endregion Config
 
 #region Main 
@@ -70,7 +70,7 @@ if($h.IsPresent)
 
 if($D.IsPresent)
 {
-    delete-Log
+    remove-Log
     exit
 }
 
@@ -104,8 +104,10 @@ foreach($tracker in $tracker_array)
     New-logEntry -SOURCE $0 -Message "Starting tracker $($tracker.Name)"
     if($(Test-Path -Path $($tracker.FullName)) -eq $true)
     {
-        Start-Process powershell.exe -ArgumentList "-File `"$($tracker.FullName)`"" -Wait -NoNewWindow
         Write-Verbose "Starting tracker $($tracker.FullName)"
+        $File = $($($tracker.FullName) + ' -uuid "' + $current_collection_uuid +'"')
+        $FIle
+        Start-Process powershell.exe -ArgumentList "-Command", "-File $File" #, "-Wait", "-NoNewWindow"
     } 
 }
 New-logEntry -SOURCE $0 -Message "Finished"
