@@ -13,7 +13,7 @@
 # VARIABLES
 # 
 DATABASE_FILENAME="../../${DATABASE_FILENAME}"
-DB_CREATE_SCRIPT_FILENAME="create_table_hostevent.sql"
+DB_CREATE_SCRIPT_FILENAME="create_tracker.sql"
 
 #
 # MAIN
@@ -30,7 +30,7 @@ log $0 "Running $0" 3 ${COLLECTION_UUID}
 sqlite3 ${DATABASE_FILENAME} < "$DB_CREATE_SCRIPT_FILENAME"
 
 while read -a line_array; do 
-  sqlcommand="insert into hostevent (UUID, COLLECTION_UUID, IP, DNS_NAME, STATUS) values ('`uuidgen`', '${COLLECTION_UUID}', '${line_array[1]}', '${line_array[2]}','${line_array[4]}')"
+  sqlcommand="insert into t_hostevent (UUID, COLLECTION_UUID, IP, DNS_NAME, STATUS) values ('`uuidgen`', '${COLLECTION_UUID}', '${line_array[1]}', '${line_array[2]}','${line_array[4]}')"
   log $0 "Found host entry IP:${line_array[0]}, DNS_NAME: ${line_array[1]}" 4 ${COLLECTION_UUID}
   sqlite3 ${DATABASE_FILENAME} "$sqlcommand"
 done < <(nmap 192.168.1.0/24 -sn -oG -|grep -v '#')

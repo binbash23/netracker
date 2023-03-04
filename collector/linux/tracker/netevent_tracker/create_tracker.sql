@@ -1,13 +1,11 @@
-CREATE TABLE IF NOT EXISTS "arpevent" (
+CREATE TABLE IF NOT EXISTS "t_netevent" (
   "UUID"  TEXT,
   "COLLECTION_UUID"  TEXT,
   "CREATE_DATE" datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
-  "IP"  TEXT,
-  "HW_TYPE" TEXT,
-  "FLAGS" TEXT,
-  "HW_ADDRESS"  TEXT,
-  "MASK"  TEXT,
-  "DEVICE"  TEXT,
+  "INTERFACE"  TEXT,
+  "STATUS" TEXT,
+  "IPV4" TEXT,
+  "IPV6" TEXT,
   PRIMARY KEY("UUID")
 );
 
