@@ -73,8 +73,19 @@ else
 sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '30')"
 fi
 
-echo "Seeting DATABASE journal mode to WAL..."
+echo "Seeting DATABASE journal mode ..."
 sqlite3 ${DATABASE_FILENAME} "pragma journal_mode=WAL"
+# fast but unsafe mode:
+#sqlite3 ${DATABASE_FILENAME} "pragma journal_mode=OFF"
+
+echo "Seeting DATABASE synchronous mode ..."
+sqlite3 ${DATABASE_FILENAME} "pragma synchronous=NORMAL"
+# fast but unsafe
+sqlite3 ${DATABASE_FILENAME} "pragma synchronous=OFF"
+# Show current state:
+sqlite3 ${DATABASE_FILENAME} "pragma synchronous"
+
+
 
 echo "`basename $0` finished"
 
