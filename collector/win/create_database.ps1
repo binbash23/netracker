@@ -78,4 +78,29 @@ catch {
     Write-Verbose "DATABASE_CREATE_DATE Check failed, can't select DATABASE_CREATE_DATE from database"
 }
 
+
+Write-Verbose "Checking sys_config property: COLLECTOR_INTERVAL_SEC..."
+try {
+    $SQLResponse = Invoke-SqliteQuery -DataSource $DB_Path -Query "select * from sys_config where property='COLLECTOR_INTERVAL_SEC'"
+    if ($SQLResponse) {
+        Write-Verbose " OK"
+    }
+    else {
+        Write-Verbose "COLLECTOR_INTERVAL_SEC is missing, inserting new COLLECTOR_INTERVAL_SEC=30"
+        $UUID = New-GUID
+        Invoke-SqliteQuery -DataSource $DB_Path -Query "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '30')"
+    }
+}
+catch {
+    Write-Verbose "DATABASE_CREATE_DATE Check failed, can't select DATABASE_CREATE_DATE from database"
+}
+
+Write-Verbose "Seeting DATABASE journal mode to WAL..."
+try {
+    $SQLResponse = Invoke-SqliteQuery -DataSource $DB_Path -Query "pragma journal_mode=WAL"
+}
+catch {
+    Write-Verbose "Seeting DATABASE journal mode to WAL... failed"
+}
+
 #endregion Main

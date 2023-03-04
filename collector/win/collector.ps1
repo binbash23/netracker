@@ -59,6 +59,49 @@ EXAMPLES
 "
 
 $VerbosePreference = "Continue" # "SilentlyContinue" # 
+
+function check-tracker {
+    param (
+    [string]$tracker_name
+    )
+    if ([string]::IsNullOrWhiteSpace($tracker_name)) {
+        Write-Verbose "Error: Tracker name is empty."
+        exit 1
+    }
+    Write-Verbose "tracker_name: $tracker_name"
+    $entry_exists = Invoke-SqliteQuery -DataSource $DB_Path -Query "select count(*) as Value from tracker_config where name ='$tracker_name'"
+    Write-Verbose "entry_exists: $($entry_exists.VALUE)"
+
+    if ($($entry_exists.VALUE) -eq 0) {
+        New-logEntry -SOURCE $SOURCE -Message "Register new tracker in tracker_config: $tracker_name default enabled=1" -COLLECTION_UUID $current_collection_uuid
+        Invoke-SqliteQuery -DataSource $DB_Path -Query "insert into tracker_config (NAME, ENABLED) values ('$tracker_name', 1)"
+        Write-Verbose 1
+        return 1
+    } else {
+        $enabled = Invoke-SqliteQuery -DataSource $DB_Path -Query "select enabled from tracker_config where name='$tracker_name'"
+        New-logEntry -SOURCE $SOURCE -Message "Found tracker in config with status=$($enabled.ENABLED)" -COLLECTION_UUID $current_collection_uuid
+
+        if ($($enabled.ENABLED) -eq 1) {
+            Write-Verbose 1
+            return 1
+        } else {
+            Write-Verbose 0
+            return 0
+        }
+    }
+}    
+
+function get_collector_sleep_interval_from_configuration {
+    $sleep_interval= Invoke-SqliteQuery -DataSource $DB_Path "select value from sys_config where property='COLLECTOR_INTERVAL_SEC'"
+    if(!$sleep_interval)
+    {
+        $sleep_interval = 5
+    }
+    return $sleep_interval;
+  }
+  
+
+
 #endregion Config
 
 #region Main 
@@ -87,6 +130,10 @@ if($(Test-Path -Path $DB_Path) -eq $false)
     Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" -Wait
 }          
 
+
+while ($true) {
+    
+
 New-logEntry -SOURCE $SOURCE -Message "Starting"
 
 # CREATING NEW COLLECTION
@@ -104,9 +151,22 @@ foreach($tracker in $tracker_array)
 {
     if($(Test-Path -Path $($tracker.FullName)) -eq $true)
     {
+             
+        $is_tracker_enabled = $(check-tracker -tracker_name $($tracker.Name).Replace('_tracker.ps1',''))
+        Write-Verbose "tracker enabled?  $is_tracker_enabled"
+        if($is_tracker_enabled -eq 0)
+        {
+            New-logEntry -SOURCE $SOURCE -Message "Tracker $($tracker.Name) is disabled. Skipping start." -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 3
+            Continue
+        }
         New-logEntry -SOURCE $SOURCE -Message "Starting tracker $($tracker.Name)" -COLLECTION_UUID $current_collection_uuid
+        
+        
         Write-Verbose "Starting tracker $($tracker.FullName)"
         # Erstellen Sie einen neuen Hintergrundjob für das Skript mit Parametern
+
+
+
         $job = Start-Job -FilePath $($tracker.FullName) -ArgumentList $current_collection_uuid, $ModulPath, $($tracker.FullName)
 
         # Warten Sie, bis der Job abgeschlossen ist, und rufen Sie das Ergebnis ab
@@ -117,6 +177,10 @@ foreach($tracker in $tracker_array)
         #Write-Verbose  $jobResult
    
     } 
+}
+Write-Verbose "Sleeping for $($(get_collector_sleep_interval_from_configuration).Value)"
+Start-Sleep -Seconds $(get_collector_sleep_interval_from_configuration).Value
+
 }
 New-logEntry -SOURCE $SOURCE -Message "Collector Finished" -COLLECTION_UUID $current_collection_uuid
 
