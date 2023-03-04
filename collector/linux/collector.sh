@@ -31,7 +31,7 @@ OPTIONS
 
   If you start with no options, the collector will create/check the collector
   database and then run all trackers to collect information into the
-  colelctor database.
+  collector database.
 
 EXAMPLES
 
