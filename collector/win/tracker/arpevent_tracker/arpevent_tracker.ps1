@@ -8,24 +8,17 @@ param(
     Purpose: arpevent tracker  
 #>
 
-#region Dependencies
-$VerbosePreference = "Continue" # "SilentlyContinue"
-$Path = $(Split-path -path $ScriptRoot -Parent)
-$FileName = $(Split-path -path $ScriptRoot -Leaf)
-
-# The collectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
-# a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
+#region Dependencies & config
 Import-Module $ModulePath
 
-#endregion Dependencies
-
-#region Config
+$VerbosePreference = "Continue" # "SilentlyContinue"
+$Path = $(Split-path -path $ScriptRoot -Parent)
+$SOURCE = $(Split-path -path $ScriptRoot -Leaf)
 $CollectorConfig = Get-CollectorConfig
 $DB_PATH = Join-Path -Path $(Split-Path $(Split-Path $Path -Parent) -Parent) -ChildPath $CollectorConfig.DATABASE_FILENAME
 $Query = Get-Content $($Path + '\create_table_arpevent.sql') -Raw
-#$DB_PATH 
-$SOURCE = $FileName
-#endregion Config
+
+#endregion Dependencies & config
 
 #region Main 
 
@@ -35,17 +28,17 @@ if ($(Test-path -Path $DB_Path ) -eq $true)
 {
     New-logEntry -SOURCE $SOURCE -Message "arpevent tracker started ..." -COLLECTION_UUID $uuid
 
-    #try {
+    try {
         Invoke-SqliteQuery -DataSource $DB_Path -Query $Query
-        #Write-Verbose "arpevent tracker table created..."
+        Write-Verbose "arpevent tracker table created..."
         New-logEntry -SOURCE $SOURCE -Message "arpevent tracker table created..." -COLLECTION_UUID $uuid
 
-    #}
-    #catch {
-        #Write-Verbose "arpevent tracker table creation failed ..."
-        #New-logEntry -SOURCE $0 -Message "arpevent tracker table creation failed ..." #-LOCAL_LOG_LEVEL 1
+    }
+    catch {
+        Write-Verbose "arpevent tracker table creation failed ..."
+        New-logEntry -SOURCE $0 -Message "arpevent tracker table creation failed ..." #-LOCAL_LOG_LEVEL 1
 
-    #}
+    }
 
 #region insert statement
 
@@ -97,6 +90,7 @@ insert into arpevent
 
 #endregion insert statement
 }
+
 New-logEntry -SOURCE $SOURCE -Message "Tracker Finished" -COLLECTION_UUID $uuid
 
 #endregion Main
