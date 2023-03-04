@@ -63,6 +63,20 @@ else
 sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('DATABASE_UUID', '${UUID}')"
 fi
 
+echo -n "Checking sys_config property: COLLECTOR_INTERVAL_SEC..."
+COLLECTOR_INTERVAL_SEC=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='COLLECTOR_INTERVAL_SEC'"`
+if [ ! -z "${COLLECTOR_INTERVAL_SEC}" ]; then
+  echo " OK"
+else
+  echo
+  echo "COLLECTOR_INTERVAL_SEC is missing, inserting new COLLECTOR_INTERVAL_SEC=30"
+  UUID=`uuidgen`
+sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '30')"
+fi
+
+echo "Seeting DATABASE journal mode to WAL..."
+sqlite3 ${DATABASE_FILENAME} "pragma journal_mode=WAL"
+
 echo "`basename $0` finished"
 
 
