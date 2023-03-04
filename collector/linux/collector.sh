@@ -125,7 +125,7 @@ log $0 "Creating new collection with UUID: ${current_collection_uuid}" 4 ${curre
 log $0 "Detecting available trackers..." 3 ${current_collection_uuid} 
 tracker_array=(`ls tracker/*/*_tracker.sh`)
 
-log $0 "Found ${#tracker_array[@]} trackers..." 3 ${current_collection_uuid}
+log $0 "Found ${#tracker_array[@]} tracker(s)..." 3 ${current_collection_uuid}
 
 base_dir=`pwd`
 for current_tracker in ${tracker_array[@]}; do
