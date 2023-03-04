@@ -20,7 +20,8 @@ param (
 
 # The collectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
-Import-Module .\collector\win\collectorcmdlets\collectorcmdlets.psm1
+$ModulPath = $PSScriptRoot + '\collectorcmdlets\collectorcmdlets.psm1'
+Import-Module $ModulPath
 
 #endregion Dependencies
 
@@ -28,7 +29,7 @@ Import-Module .\collector\win\collectorcmdlets\collectorcmdlets.psm1
 #$UUID = New-GUID
 $CollectorConfig = Get-CollectorConfig
 $DB_Path = $PSScriptRoot + '\' + $CollectorConfig.DATABASE_FILENAME
-
+$SOURCE = $MyInvocation.MyCommand.Name
 $USAGE_INFO_TEXT="
 
   collector by Jens Heine <binbash@gmx.net> 2023
@@ -86,30 +87,37 @@ if($(Test-Path -Path $DB_Path) -eq $false)
     Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" -Wait
 }          
 
-New-logEntry -SOURCE $0 -Message "Starting"
+New-logEntry -SOURCE $SOURCE -Message "Starting"
 
 # CREATING NEW COLLECTION
 $current_collection_uuid = New-Guid
-New-logEntry -SOURCE $0 -Message "Creating new collection with UUID: $($current_collection_uuid)" 
+New-logEntry -SOURCE $SOURCE -Message "Creating new collection with UUID: $($current_collection_uuid)" -COLLECTION_UUID $current_collection_uuid
 
 # DETECTING AVAILABLE TRACKERS
-New-logEntry -SOURCE $0 -Message "Detecting available trackers..."
+New-logEntry -SOURCE $SOURCE -Message "Detecting available trackers..." -COLLECTION_UUID $current_collection_uuid
 $TrackerPath = $($PSScriptRoot +"\tracker\")
 $tracker_array= Get-ChildItem $TrackerPath -Recurse | Where-Object {$_.FullName -like "*_tracker.ps1"}
 
-New-logEntry -SOURCE $0 -Message "Found $($tracker_array.count) trackers..."
+New-logEntry -SOURCE $SOURCE -Message "Found $($tracker_array.count) trackers..." -COLLECTION_UUID $current_collection_uuid
 
 foreach($tracker in $tracker_array)
 {
-    New-logEntry -SOURCE $0 -Message "Starting tracker $($tracker.Name)"
     if($(Test-Path -Path $($tracker.FullName)) -eq $true)
     {
+        New-logEntry -SOURCE $SOURCE -Message "Starting tracker $($tracker.Name)" -COLLECTION_UUID $current_collection_uuid
         Write-Verbose "Starting tracker $($tracker.FullName)"
-        $File = $($($tracker.FullName) + ' -uuid "' + $current_collection_uuid +'"')
-        $FIle
-        Start-Process powershell.exe -ArgumentList "-Command", "-File $File" #, "-Wait", "-NoNewWindow"
+        # Erstellen Sie einen neuen Hintergrundjob für das Skript mit Parametern
+        $job = Start-Job -FilePath $($tracker.FullName) -ArgumentList $current_collection_uuid, $ModulPath, $($tracker.FullName)
+
+        # Warten Sie, bis der Job abgeschlossen ist, und rufen Sie das Ergebnis ab
+        Wait-Job $job
+        #$jobResult = Receive-Job $job
+
+        # Geben Sie das Ergebnis des Jobs aus
+        #Write-Verbose  $jobResult
+   
     } 
 }
-New-logEntry -SOURCE $0 -Message "Finished"
+New-logEntry -SOURCE $SOURCE -Message "Collector Finished" -COLLECTION_UUID $current_collection_uuid
 
 #endregion Main

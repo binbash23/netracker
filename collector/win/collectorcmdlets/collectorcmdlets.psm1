@@ -81,7 +81,7 @@ function New-logEntry {
   [string]$COLLECTION_UUID
   )
   
-  $SOURCE = if ([string]::IsNullOrEmpty($SOURCE)) {"unknown"} else {$SOURCE}
+  $SOURCE = if ([string]::IsNullOrEmpty($SOURCE)) {"unknown"} else {$($SOURCE)}
   $LOCAL_LOG_LEVEL = if ([string]::IsNullOrEmpty($LOCAL_LOG_LEVEL)) {3} else {$LOCAL_LOG_LEVEL}
   $COLLECTION_UUID = if ([string]::IsNullOrEmpty($COLLECTION_UUID)) {-1} else {$COLLECTION_UUID}
   

@@ -1,8 +1,7 @@
-[CmdletBinding()]
-param (
-    [Parameter()]
-    [guid]
-    $uuid
+param(
+   $uuid,
+   $ModulePath,
+   $ScriptRoot
 )
 <#
     Author: Jens Heine & Andreas Stöcker
@@ -11,46 +10,47 @@ param (
 
 #region Dependencies
 $VerbosePreference = "Continue" # "SilentlyContinue"
+$Path = $(Split-path -path $ScriptRoot -Parent)
+$FileName = $(Split-path -path $ScriptRoot -Leaf)
 
 # The collectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
-$ModulPath = $(Split-Path $(Split-Path $PSScriptRoot -Parent) -Parent) + '\collectorcmdlets\collectorcmdlets.psm1'
-
-Import-Module $ModulPath
+Import-Module $ModulePath
 
 #endregion Dependencies
 
 #region Config
 $CollectorConfig = Get-CollectorConfig
-$DB_PATH = Join-Path -Path $(Split-Path $(Split-Path $PSScriptRoot -Parent) -Parent) -ChildPath $CollectorConfig.DATABASE_FILENAME
-$Query = Get-Content $($PSScriptRoot + '\create_table_arpevent.sql') -Raw
-$DB_PATH 
-
+$DB_PATH = Join-Path -Path $(Split-Path $(Split-Path $Path -Parent) -Parent) -ChildPath $CollectorConfig.DATABASE_FILENAME
+$Query = Get-Content $($Path + '\create_table_arpevent.sql') -Raw
+#$DB_PATH 
+$SOURCE = $FileName
 #endregion Config
 
-start-sleep -seconds 5
 #region Main 
 
 Write-Verbose "Checking collector database... $DB_Path "
 
 if ($(Test-path -Path $DB_Path ) -eq $true) 
 {
-    try {
+    New-logEntry -SOURCE $SOURCE -Message "arpevent tracker started ..." -COLLECTION_UUID $uuid
+
+    #try {
         Invoke-SqliteQuery -DataSource $DB_Path -Query $Query
-        Write-Verbose "arpevent tracker table created..."
-        New-logEntry -SOURCE $0 -Message "arpevent tracker table created..."
+        #Write-Verbose "arpevent tracker table created..."
+        New-logEntry -SOURCE $SOURCE -Message "arpevent tracker table created..." -COLLECTION_UUID $uuid
 
-    }
-    catch {
-        Write-Verbose "arpevent tracker table creation failed ..."
-        New-logEntry -SOURCE $0 -Message "arpevent tracker table creation failed ..." -LOCAL_LOG_LEVEL 1
+    #}
+    #catch {
+        #Write-Verbose "arpevent tracker table creation failed ..."
+        #New-logEntry -SOURCE $0 -Message "arpevent tracker table creation failed ..." #-LOCAL_LOG_LEVEL 1
 
-    }
+    #}
 
 #region insert statement
 
 $table = Get-NetNeighbor -AddressFamily IPv4
-$output = @()
+#$output = @()
 foreach ($row in $table) 
 {
 $ifIndex = $row.ifIndex
@@ -65,7 +65,7 @@ $obj = [PSCustomObject]@{
     'Mask' = $row.State
     'Device' = $ifDesc.InterfaceAlias
 }
-$output += $obj
+#$output += $obj
 
 $insert_sql = @" 
 insert into arpevent 
@@ -89,14 +89,14 @@ insert into arpevent
     '$($obj.Device)'
 );
 "@
-$insert_sql
-New-logEntry -SOURCE $0 -Message "Found arp entry IP:$($obj.IPAddress), MAC: $($obj.MACAddress)"
 
-Invoke-SqliteQuery -DataSource $DB_PATH -Query $insert_sql | Out-Null
+    New-logEntry -SOURCE $SOURCE -Message "Found arp entry IP:$($obj.IPAddress), MAC: $($obj.MACAddress)" -COLLECTION_UUID $uuid
+
+    Invoke-SqliteQuery -DataSource $DB_PATH -Query $insert_sql | Out-Null
 }
 
 #endregion insert statement
 }
-New-logEntry -SOURCE $0 -Message "Finished"
+New-logEntry -SOURCE $SOURCE -Message "Tracker Finished" -COLLECTION_UUID $uuid
 
 #endregion Main
