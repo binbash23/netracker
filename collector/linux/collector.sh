@@ -14,6 +14,7 @@
 #
 # VARIABLES
 #
+COLLECTOR_SLEEP_INTERVAL=30
 USAGE_INFO_TEXT="
 
   collector by Jens Heine <binbash@gmx.net> 2023
@@ -85,6 +86,9 @@ echo "Checking database ${DATABASE_FILENAME}..."
 
 log $0 "Starting"
 
+# Main loop: run all trackers every interval
+while true; do
+
 # CREATING NEW COLLECTION
 current_collection_uuid=`uuidgen`
 log $0 "Creating new collection with UUID: ${current_collection_uuid}" 
@@ -104,6 +108,12 @@ for current_tracker in ${tracker_array[@]}; do
   $current_tracker_filename
   #./`basename ${current_tracker}`
   cd ${base_dir}
+done
+
+echo "Sleeping $COLLECTOR_SLEEP_INTERVAL seconds..."
+sleep $COLLECTOR_SLEEP_INTERVAL
+
+# Main loop end: run all trackers every interval
 done
 
 log $0 "Finished"
