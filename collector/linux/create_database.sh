@@ -81,7 +81,7 @@ sqlite3 ${DATABASE_FILENAME} "pragma journal_mode=WAL"
 echo "Seeting DATABASE synchronous mode ..."
 sqlite3 ${DATABASE_FILENAME} "pragma synchronous=NORMAL"
 # fast but unsafe
-sqlite3 ${DATABASE_FILENAME} "pragma synchronous=OFF"
+#sqlite3 ${DATABASE_FILENAME} "pragma synchronous=OFF"
 # Show current state:
 sqlite3 ${DATABASE_FILENAME} "pragma synchronous"
 
