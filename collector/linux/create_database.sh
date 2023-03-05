@@ -70,7 +70,7 @@ if [ ! -z "${COLLECTOR_INTERVAL_SEC}" ]; then
 else
   echo
   echo "COLLECTOR_INTERVAL_SEC is missing, inserting new COLLECTOR_INTERVAL_SEC=30"
-sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '30')"
+sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '${DEFAULT_COLLECTOR_HEARTBEAT_SEC}')"
 fi
 
 echo "Seeting DATABASE journal mode ..."

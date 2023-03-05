@@ -19,10 +19,17 @@ CREATE TABLE IF NOT EXISTS "tracker_config" (
     "ENABLED"     int,
     "INTERVAL_SEC"     INT,
     "LAST_EXECUTION"     datetime,
-    "IS_RUNNING"     int,
+    "IS_RUNNING"     int default 0,
     "NEXT_SCHEDULED_EXECUTION" datetime GENERATED ALWAYS AS (datetime(LAST_EXECUTION, ('+' || INTERVAL_SEC || ' seconds'))) ,
     PRIMARY KEY("NAME")
 );
+CREATE VIEW v_tracker_config_calc as
+SELECT
+*,
+case when NEXT_SCHEDULED_EXECUTION < datetime(CURRENT_TIMESTAMP, 'localtime') or LAST_EXECUTION is NULL then 1 else 0 end as SHOULD_RUN,
+strftime('%s', NEXT_SCHEDULED_EXECUTION) - strftime('%s', datetime(CURRENT_TIMESTAMP, 'localtime')) as NEXT_RUN_SECONDS_DELTA
+FROM
+tracker_config;
 /*
 CREATE TABLE IF NOT EXISTS "Tracker_Group" (
         "UUID"      TEXT,
