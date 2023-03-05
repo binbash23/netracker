@@ -70,22 +70,19 @@ function check-tracker {
     }
     Write-Verbose "tracker_name: $tracker_name"
     $entry_exists = Invoke-SqliteQuery -DataSource $DB_Path -Query "select count(*) as Value from tracker_config where name ='$tracker_name'"
-    Write-Verbose "entry_exists: $($entry_exists.VALUE)"
 
     if ($($entry_exists.VALUE) -eq 0) {
-        New-logEntry -SOURCE $SOURCE -Message "Register new tracker in tracker_config: $tracker_name default enabled=1" -COLLECTION_UUID $current_collection_uuid
+        New-logEntry -SOURCE $SOURCE -Message "Register new tracker in tracker_config: $tracker_name default enabled=1" -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 2
         Invoke-SqliteQuery -DataSource $DB_Path -Query "insert into tracker_config (NAME, ENABLED) values ('$tracker_name', 1)"
-        Write-Verbose 1
+        Write-Verbose "Register new tracker in tracker_config: $tracker_name default enabled=1"
         return 1
     } else {
         $enabled = Invoke-SqliteQuery -DataSource $DB_Path -Query "select enabled from tracker_config where name='$tracker_name'"
-        New-logEntry -SOURCE $SOURCE -Message "Found tracker in config with status=$($enabled.ENABLED)" -COLLECTION_UUID $current_collection_uuid
-
+        New-logEntry -SOURCE $SOURCE -Message "Found tracker in config with status=$($enabled.ENABLED)" -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 4
+        Write-Verbose "tracker status: $($enabled.ENABLED)"
         if ($($enabled.ENABLED) -eq 1) {
-            Write-Verbose 1
             return 1
         } else {
-            Write-Verbose 0
             return 0
         }
     }
@@ -124,58 +121,42 @@ if($L.IsPresent)
     exit
 }
 
-
 if($(Test-Path -Path $DB_Path) -eq $false)
 {
     Start-Process powershell.exe -Verb runAs -ArgumentList "-File `"$PSScriptRoot\create_database.ps1`"" -Wait
-}          
-
+}  
 
 while ($true) {
-    
 
 New-logEntry -SOURCE $SOURCE -Message "Starting"
-
 # CREATING NEW COLLECTION
 $current_collection_uuid = New-Guid
-New-logEntry -SOURCE $SOURCE -Message "Creating new collection with UUID: $($current_collection_uuid)" -COLLECTION_UUID $current_collection_uuid
+New-logEntry -SOURCE $SOURCE -Message "Creating new collection with UUID: $($current_collection_uuid)" -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 4
 
 # DETECTING AVAILABLE TRACKERS
-New-logEntry -SOURCE $SOURCE -Message "Detecting available trackers..." -COLLECTION_UUID $current_collection_uuid
+New-logEntry -SOURCE $SOURCE -Message "Detecting available trackers..." -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 3
 $TrackerPath = $($PSScriptRoot +"\tracker\")
 $tracker_array= Get-ChildItem $TrackerPath -Recurse | Where-Object {$_.FullName -like "*_tracker.ps1"}
 
-New-logEntry -SOURCE $SOURCE -Message "Found $($tracker_array.count) trackers..." -COLLECTION_UUID $current_collection_uuid
-
+New-logEntry -SOURCE $SOURCE -Message "Found $($tracker_array.count) trackers..." -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 3
 foreach($tracker in $tracker_array)
 {
     if($(Test-Path -Path $($tracker.FullName)) -eq $true)
-    {
-             
+    { 
         $is_tracker_enabled = $(check-tracker -tracker_name $($tracker.Name).Replace('_tracker.ps1',''))
-        Write-Verbose "tracker enabled?  $is_tracker_enabled"
         if($is_tracker_enabled -eq 0)
         {
             New-logEntry -SOURCE $SOURCE -Message "Tracker $($tracker.Name) is disabled. Skipping start." -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 3
             Continue
         }
-        New-logEntry -SOURCE $SOURCE -Message "Starting tracker $($tracker.Name)" -COLLECTION_UUID $current_collection_uuid
-        
-        
+        New-logEntry -SOURCE $SOURCE -Message "Starting tracker $($tracker.Name)" -COLLECTION_UUID $current_collection_uuid -LOCAL_LOG_LEVEL 3    
         Write-Verbose "Starting tracker $($tracker.FullName)"
-        # Erstellen Sie einen neuen Hintergrundjob für das Skript mit Parametern
-
-
-
         $job = Start-Job -FilePath $($tracker.FullName) -ArgumentList $current_collection_uuid, $ModulPath, $($tracker.FullName)
-
-        # Warten Sie, bis der Job abgeschlossen ist, und rufen Sie das Ergebnis ab
         Wait-Job $job
         #$jobResult = Receive-Job $job
 
         # Geben Sie das Ergebnis des Jobs aus
-        #Write-Verbose  $jobResult
-   
+        #Write-Verbose  $jobResult  
     } 
 }
 Write-Verbose "Sleeping for $($(get_collector_sleep_interval_from_configuration).Value)"

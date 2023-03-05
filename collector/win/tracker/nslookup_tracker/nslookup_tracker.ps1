@@ -5,11 +5,9 @@
 
 #region Dependencies
 $VerbosePreference = "Continue" # "SilentlyContinue"
-
 # The collectorcmdlets Module will be imported by every tracker module, it contains a set of cmdlets and
 # a Module Scope Variable $CollectorConfig in which all Standard Configurations are stored in an array
 $ModulPath = Split-Path $(Split-Path $PSScriptRoot -Parent) -Parent + '\collectorcmdlets\collectorcmdlets.psm1'
-
 Import-Module $ModulPath
 
 #endregion Dependencies

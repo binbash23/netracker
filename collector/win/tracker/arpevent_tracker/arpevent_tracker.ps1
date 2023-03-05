@@ -23,25 +23,13 @@ $Query = Get-Content $($Path + '\create_table_arpevent.sql') -Raw
 #region Main 
 
 Write-Verbose "Checking collector database... $DB_Path "
+New-logEntry -SOURCE $SOURCE -Message "Running" -COLLECTION_UUID $uuid -LOCAL_LOG_LEVEL 3
 
 if ($(Test-path -Path $DB_Path ) -eq $true) 
 {
-    New-logEntry -SOURCE $SOURCE -Message "arpevent tracker started ..." -COLLECTION_UUID $uuid
-
-    try {
-        Invoke-SqliteQuery -DataSource $DB_Path -Query $Query
-        Write-Verbose "arpevent tracker table created..."
-        New-logEntry -SOURCE $SOURCE -Message "arpevent tracker table created..." -COLLECTION_UUID $uuid
-
-    }
-    catch {
-        Write-Verbose "arpevent tracker table creation failed ..."
-        New-logEntry -SOURCE $0 -Message "arpevent tracker table creation failed ..." #-LOCAL_LOG_LEVEL 1
-
-    }
+Invoke-SqliteQuery -DataSource $DB_Path -Query $Query
 
 #region insert statement
-
 $table = Get-NetNeighbor -AddressFamily IPv4
 #$output = @()
 foreach ($row in $table) 
@@ -83,14 +71,14 @@ insert into arpevent
 );
 "@
 
-    New-logEntry -SOURCE $SOURCE -Message "Found arp entry IP:$($obj.IPAddress), MAC: $($obj.MACAddress)" -COLLECTION_UUID $uuid
+    New-logEntry -SOURCE $SOURCE -Message "Found arp entry IP:$($obj.IPAddress), MAC: $($obj.MACAddress)" -COLLECTION_UUID $uuid -LOCAL_LOG_LEVEL 4
 
-    Invoke-SqliteQuery -DataSource $DB_PATH -Query $insert_sql | Out-Null
+    Invoke-SqliteQuery -DataSource $DB_PATH -Query $insert_sql
 }
 
 #endregion insert statement
 }
 
-New-logEntry -SOURCE $SOURCE -Message "Tracker Finished" -COLLECTION_UUID $uuid
+New-logEntry -SOURCE $SOURCE -Message "Tracker Finished" -COLLECTION_UUID $uuid -LOCAL_LOG_LEVEL 3
 
 #endregion Main
