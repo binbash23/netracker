@@ -171,9 +171,9 @@ for current_tracker in ${tracker_array[@]}; do
   current_tracker_basename=`basename ${current_tracker}`
   current_tracker_name=${current_tracker_basename/_tracker.sh/}
   #enabled=`is_tracker_enabled ${current_tracker_name}`
-  enabled=`is_tracker_should_run ${current_tracker_name}`
-  if [ "$enabled" == "0" ]; then
-    log $0 "Tracker ${current_tracker_name} is disabled,running or the run interval is not reached. Skipping start." 3 ${current_collection_uuid}
+  tracker_should_run=`is_tracker_should_run ${current_tracker_name}`
+  if [ "$tracker_should_run" == "0" ]; then
+    log $0 "Tracker ${current_tracker_name} is disabled,running or the run interval is not reached. Skipping start." 4 ${current_collection_uuid}
     continue
   fi
 
