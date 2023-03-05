@@ -65,8 +65,9 @@ insert into t_osenv (
 "@
 
 $GenericInsertSQL
-    Invoke-SqliteQuery -DataSource $DB_Path -Query $GenericCreateSQL
-    Invoke-SqliteQuery -DataSource $DB_Path -Query $GenericInsertSQL
+    
+Invoke-SqliteQuery -DataSource $DB_Path -Query $GenericCreateSQL
+Invoke-SqliteQuery -DataSource $DB_Path -Query $GenericInsertSQL
 
 }
 
