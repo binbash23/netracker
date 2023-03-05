@@ -1,0 +1,75 @@
+#
+# collector.lib 20230226
+# jens heine <binbash@gmx.net>, andreas stoecker <a.stoecker@gmx.net>
+#
+# collector.lib will be sourced by every tracker module to provide
+# global variables (like collector.db filename etc) and
+# usefull global functions like logging etc.
+#
+
+# SQlite database filename where all data will be stored 
+DATABASE_FILENAME="collector.db"
+DEFAULT_COLLECTOR_HEARTBEAT_SEC=30
+DEFAULT_TRACKER_INTERVAL_SEC=30
+
+# Loglevel for every process. Possible values are:
+# 0=OFF
+# 1=CRITICAL
+# 2=WARN
+# 3=INFO
+# 4=DEBUG
+LOG_LEVEL=4
+
+#
+# log function. Call it from everywhere like this
+# log $0 <MESSAGE> [<LOG_LEVEL> <COLLECTION_UUID>]
+# The $0 arguments makes sure that the source of the logging script
+# will be saved in the log table in the database for better debugging.
+#
+function log() {
+
+  local SOURCE="`basename ${1}`"
+  local MESSAGE="${2}"
+  local LOCAL_LOG_LEVEL="${3}"
+  local COLLECTION_UUID="${4}"
+
+  local SOURCE="${SOURCE:=unknown}"
+  #local MESSAGE="${2}"
+  local LOCAL_LOG_LEVEL="${LOCAL_LOG_LEVEL:=3}"
+  local COLLECTION_UUID="${COLLECTION_UUID:=-1}"
+  
+  if [ ${LOCAL_LOG_LEVEL} -gt ${LOG_LEVEL} ]; then
+    # loglevel is to low
+    return
+  fi
+
+  if [ ${LOCAL_LOG_LEVEL} -eq 0 ]; then LOCAL_LOG_LEVEL=OFF
+  elif [ ${LOCAL_LOG_LEVEL} -eq 1 ]; then LOCAL_LOG_LEVEL=CRITICAL
+  elif [ ${LOCAL_LOG_LEVEL} -eq 2 ]; then LOCAL_LOG_LEVEL=WARN
+  elif [ ${LOCAL_LOG_LEVEL} -eq 3 ]; then LOCAL_LOG_LEVEL=INFO
+  elif [ ${LOCAL_LOG_LEVEL} -eq 4 ]; then LOCAL_LOG_LEVEL=DEBUG
+  fi
+
+  #echo $SOURCE
+  #echo $LOCAL_LOG_LEVEL
+  #echo $MESSAGE
+  #echo $COLLECTION_UUID
+  
+  sqlite3 ${DATABASE_FILENAME} "insert into log (LOG_LEVEL, MESSAGE, SOURCE, COLLECTION_UUID) values ('${LOCAL_LOG_LEVEL}', '${MESSAGE}', '${SOURCE}', '${COLLECTION_UUID}')"
+
+}
+
+function show_log() {
+  #sqlite3 ${DATABASE_FILENAME} "select * from log order by ID desc LIMIT 10"
+  sqlite3 ${DATABASE_FILENAME} "select CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from (select ID, CREATE_DATE, SOURCE, LOG_LEVEL, MESSAGE from log order by ID desc LIMIT 100) order by ID asc"
+}
+
+function delete_log() {
+  sqlite3 ${DATABASE_FILENAME} "delete from log"
+}
+
+
+
+#
+# END
+#
