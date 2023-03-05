@@ -26,14 +26,14 @@ fi
 
 log $0 "Running $0" 3 ${COLLECTION_UUID}
   
-# Create arpevent table if not exists
+# Create netevent table if not exists
 sqlite3 ${DATABASE_FILENAME} < "$DB_CREATE_SCRIPT_FILENAME"
 
 while read -a line_array; do 
-  sqlcommand="insert into t_arpevent (UUID, COLLECTION_UUID, IP, HW_TYPE, FLAGS, HW_ADDRESS, MASK, DEVICE) values ('`uuidgen`', '${COLLECTION_UUID}', '${line_array[0]}', '${line_array[1]}','${line_array[2]}','${line_array[3]}','${line_array[4]}','${line_array[5]}')"
-  log $0 "Found arp entry IP:${line_array[0]}, MAC: ${line_array[3]}" 4 ${COLLECTION_UUID}
+  sqlcommand="insert into t_netevent (UUID, COLLECTION_UUID, INTERFACE, STATUS, IPV4) values ('`uuidgen`', '${COLLECTION_UUID}', '${line_array[0]}', '${line_array[1]}','${line_array[2]}')"
+  log $0 "Found net entry INTERFACE:${line_array[0]}, STATUS: ${line_array[1]}" 4 ${COLLECTION_UUID}
   sqlite3 ${DATABASE_FILENAME} "$sqlcommand"
-done < <(tail -n +2 /proc/net/arp)
+done < <(ip -br -f inet a)
 
 log $0 "Finished $0" 3 ${COLLECTION_UUID}
 
