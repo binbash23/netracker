@@ -1,3 +1,12 @@
+/*
+
+20230305 jens heine <binbash@gmx.net>, andreas stoecker <a.stoecker@gmx.net>
+
+Basic database structure creation script.
+
+*/
+
+
 CREATE TABLE IF NOT EXISTS "sys_config" (
         "CREATE_DATE" datetime not null default (datetime(CURRENT_TIMESTAMP, 'localtime')),
         "PROPERTY"    TEXT,
