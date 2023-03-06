@@ -60,7 +60,7 @@ else
   echo " MISSING"
   echo "Creating property..."
   UUID=`uuidgen`
-sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('DATABASE_UUID', '${UUID}')"
+  sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('DATABASE_UUID', '${UUID}')"
 fi
 
 echo -n "Checking sys_config property COLLECTOR_INTERVAL_SEC    :"
@@ -70,7 +70,7 @@ if [ ! -z "${COLLECTOR_INTERVAL_SEC}" ]; then
 else
   echo " MISSING"
   echo "Creating property..."
-sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '${DEFAULT_COLLECTOR_HEARTBEAT_SEC}')"
+  sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_INTERVAL_SEC', '${DEFAULT_COLLECTOR_HEARTBEAT_SEC}')"
 fi
 
 echo -n "Checking sys_config property COLLECTOR_SHUTDOWN_SWITCH :"
@@ -81,7 +81,17 @@ if [ ! -z "${COLLECTOR_SHUTDOWN_SWITCH}" ]; then
 else
   echo " MISSING"
   echo "Creating property..."
-sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_SHUTDOWN_SWITCH', '0')"
+  sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('COLLECTOR_SHUTDOWN_SWITCH', '0')"
+fi
+
+echo -n "Checking sys_config property LOG_TABLE_MAX_DAYS        :"
+LOG_TABLE_MAX_DAYS=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='LOG_TABLE_MAX_DAYS'"`
+if [ ! -z "${LOG_TABLE_MAX_DAYS}" ]; then
+  echo " OK"
+else
+  echo " MISSING"
+  echo "Creating property..."
+  sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('LOG_TABLE_MAX_DAYS', '1')"
 fi
 
 echo -n "Setting DATABASE journal mode                          : "
