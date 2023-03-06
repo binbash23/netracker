@@ -25,11 +25,14 @@ USAGE
    collector [OPTIONS]
 
 OPTIONS
+        -C              : Show sys_config table
         -D              : Delete/clear log table in database
         -h              : Show usage information
         -k              : Shutdown collector by setting kill switch in 
                           sys_config table to 1
         -L              : Show latest log information from database
+        -S              : Show shutdown switch status
+        -T              : Show table v_tracker_config_calc (tracker schedule)
 
   If you start with no options, the collector will create/check the collector
   database and then run all trackers to collect information into the
@@ -121,15 +124,26 @@ function set_collector_shutdown_switch() {
   fi
 }
 
+function show_sys_config_table() {
+  sqlite3 ${DATABASE_FILENAME} "select property, value from sys_config order by 1"
+}
+
+function show_v_tracker_config_calc_table() {
+  sqlite3 ${DATABASE_FILENAME} -header "select * from v_tracker_config_calc"
+}
+
 
 #
 # MAIN
 #
-while getopts "DLhk" options;do
+while getopts "CDLhkST" options;do
   case "$options" in
 #    l) LOGFILE="${OPTARG}"
 #       logDebug "Using custom log file: ${LOGFILE}"
 #       ;;
+    C) show_sys_config_table
+       exit 0
+       ;;
     D) delete_log
        exit 0
        ;;
@@ -140,6 +154,12 @@ while getopts "DLhk" options;do
        exit
        ;;
     L) show_log
+       exit 0
+       ;;
+    S) echo "Shutdown switch status: `check_collector_shutdown_switch`"
+       exit 0
+       ;;
+    T) show_v_tracker_config_calc_table
        exit 0
        ;;
 #    v) showVersionInfo
