@@ -64,7 +64,7 @@ sqlite3 ${DATABASE_FILENAME} "insert into sys_config (PROPERTY, VALUE) values ('
 fi
 
 echo -n "Checking sys_config property COLLECTOR_INTERVAL_SEC    :"
-COLLECTOR_INTERVAL_SEC=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='${DEFAULT_COLLECTOR_HEARTBEAT_SEC}'"`
+COLLECTOR_INTERVAL_SEC=`sqlite3 ${DATABASE_FILENAME} "select * from sys_config where property='${COLLECTOR_INTERVAL_SEC}'"`
 if [ ! -z "${COLLECTOR_INTERVAL_SEC}" ]; then
   echo " OK"
 else
