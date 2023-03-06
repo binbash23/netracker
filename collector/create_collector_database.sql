@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "tracker_config" (
     "NEXT_SCHEDULED_EXECUTION" datetime GENERATED ALWAYS AS (datetime(LAST_EXECUTION, ('+' || INTERVAL_SEC || ' seconds'))) ,
     PRIMARY KEY("NAME")
 );
-CREATE VIEW v_tracker_config_calc as
+CREATE VIEW if not exists v_tracker_config_calc as
 SELECT
 *,
 case when NEXT_SCHEDULED_EXECUTION < datetime(CURRENT_TIMESTAMP, 'localtime') or LAST_EXECUTION is NULL then 1 else 0 end as SHOULD_RUN,

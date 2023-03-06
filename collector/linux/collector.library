@@ -9,8 +9,6 @@
 
 # SQlite database filename where all data will be stored 
 DATABASE_FILENAME="collector.db"
-DEFAULT_COLLECTOR_HEARTBEAT_SEC=30
-DEFAULT_TRACKER_INTERVAL_SEC=30
 
 # Loglevel for every process. Possible values are:
 # 0=OFF
