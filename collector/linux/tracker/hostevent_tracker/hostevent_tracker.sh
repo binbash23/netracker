@@ -3,6 +3,7 @@
 # jens heine <binbash@gmx.net>, andreas stoecker <a.stoecker@gmx.net>
 #
 #
+#set -x
 
 #
 # SOURCE LIBRARIES
@@ -31,8 +32,14 @@ sqlite3 ${DATABASE_FILENAME} < "$DB_CREATE_SCRIPT_FILENAME"
 
 # collect available networks from t_netevent table if exists
 available_networks_array=(`sqlite3 ${DATABASE_FILENAME} "select distinct ipv4 from t_netevent where STATUS='UP' and CREATE_DATE=(select max(CREATE_DATE) from t_netevent)"`)
+#available_networks_array=(`sqlite3 ${DATABASE_FILENAME} "select distinct '\"'||ipv4||'\"' from t_netevent where STATUS='UP' "`)
+#available_networks_array=(`sqlite3 ${DATABASE_FILENAME} "select distinct ipv4 from t_netevent where STATUS='UP' "`)
 
-log $0 "Available networks to scan: ${available_networks_array[@]}"
+#echo "-> "${available_networks_array[@]}
+
+networks_string="${available_networks_array[@]}"
+
+log $0 "Available networks to scan: ${networks_string}" 4 ${COLLECTION_UUID}
 
 
 for current_network in "${available_networks_array[@]}"; do
