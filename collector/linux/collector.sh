@@ -113,6 +113,7 @@ function set_collector_shutdown_switch() {
     while [ ${result} -eq 5 ]; do
       sqlite3 ${DATABASE_FILENAME} "update sys_config set value='1' where property='COLLECTOR_SHUTDOWN_SWITCH'"
       result=$?
+      [ ${result} -eq 5 ] && sleep 1
     done
   else
     echo "COLLECTOR_SHUTDOWN_SWITCH is already set to 1."
