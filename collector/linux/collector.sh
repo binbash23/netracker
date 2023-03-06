@@ -105,6 +105,20 @@ function check_collector_shutdown_switch() {
   echo ${shutdown:-0}
 }
 
+function set_collector_shutdown_switch() {
+  if [ "`check_collector_shutdown_switch`" == "0" ]; then
+    echo "Setting COLLECTOR_SHUTDOWN_SWITCH to 1"
+    echo "Please wait for collector to shutdown..."
+    local result=5 # 5 is "database is locked" return value of sqlite3
+    while [ ${result} -eq 5 ]; do
+      sqlite3 ${DATABASE_FILENAME} "update sys_config set value='1' where property='COLLECTOR_SHUTDOWN_SWITCH'"
+      result=$?
+    done
+  else
+    echo "COLLECTOR_SHUTDOWN_SWITCH is already set to 1."
+    echo "Maybe there is no collector running."
+  fi
+}
 
 
 #
@@ -121,14 +135,7 @@ while getopts "DLhk" options;do
     h) show_usage
        exit
        ;;
-    k) if [ "`check_collector_shutdown_switch`" == "0" ]; then
-         echo "Setting COLLECTOR_SHUTDOWN_SWITCH to 1"
-         echo "Please wait for collector to shutdown..."
-         sqlite3 ${DATABASE_FILENAME} "update sys_config set value='1' where property='COLLECTOR_SHUTDOWN_SWITCH'"
-       else
-         echo "COLLECTOR_SHUTDOWN_SWITCH is already set to 1."
-         echo "Maybe there is no collector running."
-       fi
+    k) set_collector_shutdown_switch
        exit
        ;;
     L) show_log
